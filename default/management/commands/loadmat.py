@@ -1,9 +1,10 @@
 #encoding=utf8
 from django.core.management.base import BaseCommand, CommandError
-from default.models import Material
+from default.models import Material, Secao
 
 COD_MATERIAL = 0
 MATERIAL = 1
+COD_SECAO = 2
 
 class Command(BaseCommand):
     help = 'Carrega materiais desde arquivo separado por tabuladores.'
@@ -26,11 +27,12 @@ class Command(BaseCommand):
                         register[i] = register[i].strip()
                     material, creado = Material.objects.get_or_create(
                         cod_material=register[COD_MATERIAL],
-                        material=register[MATERIAL]
+                        material=register[MATERIAL],
+                        secao=Secao.objects.get(cod_secao=register[COD_SECAO])
                         )
 
                     if creado:
-                        self.stdout.write(self.style.SUCCESS('Material "%s" criado com sucesso.' % str(material).decode('ascii',ignore=True)))
+                        self.stdout.write(self.style.SUCCESS('Material "%s" criado com sucesso.' % str(material).decode('ascii','ignore')))
                     else:
-                        self.stdout.write(self.style.WARNING('Material "%s" ja existe.' % str(material).decode('ascii',ignore=True)))
+                        self.stdout.write(self.style.WARNING('Material "%s" ja existe.' % str(material).decode('ascii','ignore')))
 

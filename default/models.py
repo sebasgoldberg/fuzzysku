@@ -11,15 +11,52 @@ MAX_SUGESTOES = 5
 class SelecaoRealizadaException(Exception):
     pass
 
+class Secao(models.Model):
+    
+    cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'), unique=True)
+    secao = models.CharField(max_length=100, verbose_name=_(u'Seção'))
+
+    class Meta:
+        ordering = ['cod_secao']
+        verbose_name = _(u"Seção")
+        verbose_name_plural = _(u"Seções")
+        app_label = 'default'
+
+    def __unicode__(self):
+        return '%s %s' % (self.cod_secao, self.secao)
+
+
+class Familia(models.Model):
+    
+    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'))
+    cod_grupo = models.CharField(max_length=4, verbose_name=_(u'Cod. Grupo'))
+    grupo = models.CharField(max_length=100, verbose_name=_(u'Grupo'))
+    cod_subgrupo = models.CharField(max_length=6, verbose_name=_(u'Cod. Subgrupo'))
+    subgrupo = models.CharField(max_length=100, verbose_name=_(u'Subgrupo'))
+    cod_familia = models.CharField(max_length=9, verbose_name=_(u'Cod. Familia'), unique=True)
+    familia = models.CharField(max_length=100, verbose_name=_(u'Familia'))
+
+    class Meta:
+        ordering = ['cod_familia']
+        verbose_name = _(u"Familia")
+        verbose_name_plural = _(u"Familias")
+        app_label = 'default'
+
+    def __unicode__(self):
+        return '%s %s' % (self.cod_familia, self.familia)
+
+
 class Material(models.Model):
     
     cod_material = models.CharField(max_length=20, verbose_name=_(u'Cod. Material'), unique=True)
     material = models.CharField(max_length=100, verbose_name=_(u'Material'))
-    familia_sugerida = models.BooleanField(verbose_name=_(u'Familia selecionada'), default=False)
+
+    familia_sugerida = models.BooleanField(verbose_name=_(u'Familia sugerida'), default=False)
     familia_selecionada = models.BooleanField(verbose_name=_(u'Familia selecionada'), default=False)
     multiplas_familias_selecionadas = models.BooleanField(verbose_name=_(u'Multiplas Familias selecionadas'), default=False)
-    #cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'), default='46')
 
+    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao')
+    familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True)
 
     class Meta:
         ordering = ['material']
@@ -74,28 +111,6 @@ class Material(models.Model):
         for (score, familia) in familias:
             self.sugestao_set.create(score=score, familia=familia)
 
-
-
-
-class Familia(models.Model):
-    
-    cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'))
-    secao = models.CharField(max_length=100, verbose_name=_(u'Seção'))
-    cod_grupo = models.CharField(max_length=4, verbose_name=_(u'Cod. Grupo'))
-    grupo = models.CharField(max_length=100, verbose_name=_(u'Grupo'))
-    cod_subgrupo = models.CharField(max_length=6, verbose_name=_(u'Cod. Subgrupo'))
-    subgrupo = models.CharField(max_length=100, verbose_name=_(u'Subgrupo'))
-    cod_familia = models.CharField(max_length=9, verbose_name=_(u'Cod. Familia'), unique=True)
-    familia = models.CharField(max_length=100, verbose_name=_(u'Familia'))
-
-    class Meta:
-        ordering = ['cod_familia']
-        verbose_name = _(u"Familia")
-        verbose_name_plural = _(u"Familias")
-        app_label = 'default'
-
-    def __unicode__(self):
-        return '%s %s' % (self.cod_familia, self.familia)
 
 class Sugestao(models.Model):
     

@@ -1,6 +1,6 @@
 #encoding=utf8
 from django.core.management.base import BaseCommand, CommandError
-from default.models import Familia
+from default.models import Familia, Secao
 
 COD_SECAO = 0
 SECAO = 1
@@ -31,8 +31,10 @@ class Command(BaseCommand):
                     for i in range(len(register)):
                         register[i] = register[i].strip()
                     familia, creado = Familia.objects.get_or_create(
-                        cod_secao=register[COD_SECAO],
-                        secao=register[SECAO],
+                        secao = Secao.objects.get_or_create(
+                            cod_secao=register[COD_SECAO],
+                            secao=register[SECAO]
+                            )[0],
                         cod_grupo=register[COD_GRUPO],
                         grupo=register[GRUPO],
                         cod_subgrupo=register[COD_SUBGRUPO],
@@ -42,7 +44,7 @@ class Command(BaseCommand):
                         )
 
                     if creado:
-                        self.stdout.write(self.style.SUCCESS(str('Familia "%s" criada com sucesso.' % familia).decode('ascii','ignore')))
+                        self.stdout.write(self.style.SUCCESS(str('Familia "%s" criada com sucesso.' % str(familia).decode('ascii','ignore')).decode('ascii','ignore')))
                     else:
                         self.stdout.write(self.style.WARNING(str('Familia "%s" ja existe.' % familia).decode('ascii','ignore')))
 
