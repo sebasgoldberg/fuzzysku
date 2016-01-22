@@ -11,7 +11,7 @@ def update_familia_selecionada(sender, instance, **kwargs):
     sugestoes_new = False
     selecionado_new = False
     multiplas_new = False
-    familia_new = None
+    familia_new = material.familia
 
     if quan_sugestoes <> 0:
         sugestoes_new = True
@@ -21,6 +21,7 @@ def update_familia_selecionada(sender, instance, **kwargs):
             selecionado_new = True
             familia_new = material.sugestao_set.get(selecionado=True).familia
         elif quan_selecoes > 1:
+            selecionado_new = True
             multiplas_new = True
 
     if ( material.familia_sugerida <> sugestoes_new or
