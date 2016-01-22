@@ -70,12 +70,12 @@ class Material(models.Model):
     cod_material = models.CharField(max_length=20, verbose_name=_(u'Cod. Material'), unique=True)
     material = models.CharField(max_length=100, verbose_name=_(u'Material'))
 
-    familia_sugerida = models.BooleanField(verbose_name=_(u'Familia sugerida'), default=False)
-    familia_selecionada = models.BooleanField(verbose_name=_(u'Familia selecionada'), default=False)
-    multiplas_familias_selecionadas = models.BooleanField(verbose_name=_(u'Multiplas Familias selecionadas'), default=False)
+    familia_sugerida = models.BooleanField(verbose_name=_(u'Fam. Sug.'), default=False)
+    familia_selecionada = models.BooleanField(verbose_name=_(u'Fam. Sel.'), default=False)
+    multiplas_familias_selecionadas = models.BooleanField(verbose_name=_(u'Mult. Fam. Sel.'), default=False)
 
     secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao')
-    familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True)
+    familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
 
     class Meta:
         ordering = ['material']
