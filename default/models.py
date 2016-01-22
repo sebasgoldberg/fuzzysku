@@ -3,10 +3,16 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from elasticsearch import Elasticsearch
 
 MAX_SUGESTOES = 5
+
+ES_INDEX = "skuhier"
+ES_DOC_TYPE = "skuhier"
+if settings.TESTING:
+    ES_INDEX = "test_%s" % ES_INDEX
 
 class SelecaoRealizadaException(Exception):
     pass
@@ -45,6 +51,19 @@ class Familia(models.Model):
     def __unicode__(self):
         return '%s %s' % (self.cod_familia, self.familia)
 
+    def index(self):
+        es = Elasticsearch()
+        body = {
+            "cod_secao": self.secao.cod_secao,
+            "secao": self.secao.secao,
+            "cod_grupo": self.cod_grupo,
+            "grupo": self.grupo,
+            "cod_subgrupo": self.cod_subgrupo,
+            "subgrupo": self.subgrupo,
+            "cod_familia": self.cod_familia,
+            "familia": self.familia,
+            }
+        es.index(index=ES_INDEX, doc_type=ES_DOC_TYPE, id=self.cod_familia, body=body)
 
 class Material(models.Model):
     
@@ -71,15 +90,28 @@ class Material(models.Model):
 
         es = Elasticsearch()
         # @todo Modificar body para hacer una búsqueda fuzzy
-        res = es.search(index="skuhier", body={
-            "query": {
-                "multi_match": {
-                    "fields": ['secao', 'grupo', 'subgrupo', 'familia'],
-                    "query": self.material,
-                    "fuzziness": "AUTO",
+        body={
+            'query': {
+                'filtered':{
+                    "query": {
+                        "multi_match": {
+                            "fields": ['secao', 'grupo', 'subgrupo', 'familia'],
+                            "query": self.material,
+                            "fuzziness": "AUTO",
+                            }
+                        },
+                    'filter': {
+                        'bool':{
+                            'must':{
+                                'term': { 'cod_secao': str(self.secao.cod_secao), },
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        })
+
+        res = es.search(index=ES_INDEX, body=body)
 
         result = []
         for hit in res['hits']['hits']:

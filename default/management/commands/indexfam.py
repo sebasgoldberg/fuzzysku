@@ -17,10 +17,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        efg = ElasticFilesGenerator("skuhier","skuhier","skuhier")
+        #efg = ElasticFilesGenerator("skuhier","skuhier","skuhier")
 
         for familia in Familia.objects.all():
 
+            familia.index()
+
+            """
             efg.add({
                 "cod_secao": familia.cod_secao,
                 "secao": familia.secao,
@@ -32,6 +35,7 @@ class Command(BaseCommand):
                 "familia": familia.familia,
                 },
                 familia.cod_familia)
+            """
 
             self.stdout.write(self.style.SUCCESS('Upload da familia "%s" feita com sucesso.' % str(familia).decode('ascii','ignore')))
 
