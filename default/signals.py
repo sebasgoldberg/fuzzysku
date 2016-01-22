@@ -19,7 +19,7 @@ def update_familia_selecionada(sender, instance, **kwargs):
 
         if quan_selecoes == 1:
             selecionado_new = True
-            familia_new = material.sugestao_set.get(selecionado=True)
+            familia_new = material.sugestao_set.get(selecionado=True).familia
         elif quan_selecoes > 1:
             multiplas_new = True
 

@@ -116,7 +116,7 @@ class Sugestao(models.Model):
     
     material = models.ForeignKey(Material, verbose_name=_(u'Material'))
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'))
-    score = models.FloatField(verbose_name=_(u'Pontuação'))
+    score = models.FloatField(verbose_name=_(u'Pontuação'), default=0)
     selecionado = models.BooleanField(verbose_name=_(u'Selecionado'), default=False)
 
     class Meta:
