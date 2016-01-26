@@ -1,7 +1,7 @@
 #encoding=utf8
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
-from default.models import Sugestao
+from default.models import Sugestao, Material
 
 def update_familia_selecionada(sender, instance, **kwargs):
 
@@ -24,6 +24,8 @@ def update_familia_selecionada(sender, instance, **kwargs):
         elif quan_selecoes > 1:
             selecionado_new = True
             multiplas_new = True
+        elif material.sugestao_set.filter(familia=material.familia).count() == 1:
+            familia_new = None
 
     if ( material.familia_sugerida <> sugestoes_new or
         material.familia_selecionada <> selecionado_new or
@@ -39,3 +41,20 @@ post_save.connect(update_familia_selecionada,
     sender=Sugestao)
 post_delete.connect(update_familia_selecionada, 
     sender=Sugestao)
+
+def update_familia_material(sender, instance, **kwargs):
+
+    familia = instance.familia
+
+    try:
+        sugestao = instance.sugestao_set.get(familia=familia, selecionado=False)
+        sugestao.selecionado = True
+        sugestao.save()
+
+    except Sugestao.DoesNotExist:
+        pass
+    
+
+post_save.connect(update_familia_material, 
+    sender=Material)
+

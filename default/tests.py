@@ -3,10 +3,68 @@ from django.test import TestCase
 
 from models import *
 
-# Create your tests here.
+class MaterialTestCase(TestCase):
+
+    def test_signal_material(self):
+
+        secao = Secao.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+            secao = secao
+        )
+
+        familia = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101001',
+            familia = 'GELADEIRAS'
+        )
+
+        familia2 = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101002',
+            familia = 'GELADEIRAS INDUSTRIAIS'
+        )
+
+        sugestao = Sugestao.objects.create(
+            material = material,
+            familia = familia
+        )
+
+        sugestao2 = Sugestao.objects.create(
+            material = material,
+            familia = familia2
+        )
+
+        quan_selecionados = Sugestao.objects.filter(selecionado=True).count()
+        self.assertEqual(quan_selecionados, 0)
+
+        material.refresh_from_db()
+        material.familia = familia2
+        material.save()
+
+        quan_selecionados = Sugestao.objects.filter(selecionado=True).count()
+        self.assertEqual(quan_selecionados, 1)
+
+        sugestao2.refresh_from_db()
+        self.assertEqual(sugestao2.selecionado, True)
+
+
 class SugestaoTestCase(TestCase):
 
-    def test_signal(self):
+    def test_signal_sugestao(self):
 
         secao = Secao.objects.create(
             cod_secao = '01',
@@ -87,7 +145,7 @@ class SugestaoTestCase(TestCase):
         sugestao2.save()
 
         material.refresh_from_db()
-        self.assertEqual(material.familia, familia2)
+        self.assertEqual(material.familia, None)
         self.assertEqual(material.familia_sugerida, True)
         self.assertEqual(material.familia_selecionada, False)
         self.assertEqual(material.multiplas_familias_selecionadas, False)
@@ -95,7 +153,7 @@ class SugestaoTestCase(TestCase):
         sugestao.delete()
         material.refresh_from_db()
 
-        self.assertEqual(material.familia, familia2)
+        self.assertEqual(material.familia, None)
         self.assertEqual(material.familia_sugerida, True)
         self.assertEqual(material.familia_selecionada, False)
         self.assertEqual(material.multiplas_familias_selecionadas, False)
@@ -103,10 +161,11 @@ class SugestaoTestCase(TestCase):
         sugestao2.delete()
         material.refresh_from_db()
 
-        self.assertEqual(material.familia, familia2)
+        self.assertEqual(material.familia, None)
         self.assertEqual(material.familia_sugerida, False)
         self.assertEqual(material.familia_selecionada, False)
         self.assertEqual(material.multiplas_familias_selecionadas, False)
+
 
     def test_sugerir(self):
 

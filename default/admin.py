@@ -32,7 +32,7 @@ class FamiliaAdmin(admin.ModelAdmin):
 
 class SugestaoAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ['material', 'score', 'familia', 'selecionado']
+    list_display = ['material', 'selecionado', 'familia', 'score']
     list_display_links = None
     search_fields = ['material__cod_material', 'material__material']
     list_editable = ['selecionado', ]

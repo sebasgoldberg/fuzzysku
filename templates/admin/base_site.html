@@ -7,7 +7,7 @@
     {% include 'autocomplete_light/static.html' %}
 {% endblock %}
 
-{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block title %} {{_('Sugestão de Familias por Material')}} | {{ title }} {% endblock %}
 
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
@@ -18,9 +18,13 @@
 {% block footer %}
     {{ block.super }}
     <script type="text/javascript">
-        $(function(){
-            $('.change-related').hide();
-            });
+        {% if not user.is_superuser %}
+            $(function(){
+                $('.change-related').hide();
+                });
+            $('#recent-actions-module').hide();
+            $('.changelink').hide();
+        {% endif %}
         $('input.autocomplete').each( function(){
             cod_material = $(this).parents('tr').find('.field-cod_material').text();
             $(this).yourlabsAutocomplete().data = {'cod_material':cod_material};
