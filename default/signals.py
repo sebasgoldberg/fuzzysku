@@ -28,6 +28,11 @@ def update_familia_material(sender, instance, **kwargs):
     
     instance.index()
 
+def es_delete(sender, instance, **kwargs):
+    instance.es_delete()
+
+
 post_save.connect(update_familia_material, 
     sender=Material)
-
+post_delete.connect(es_delete, 
+    sender=Material)

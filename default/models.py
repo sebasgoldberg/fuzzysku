@@ -12,8 +12,12 @@ MAX_SUGESTOES = 5
 
 ES_INDEX = "skuhier"
 ES_DOC_TYPE = "skuhier"
+ES_FAMILIAS_INDEX = 'familiasskus'
+ES_FAMILIAS_DOC_TYPE = 'familiasskus'
+
 if settings.TESTING:
     ES_INDEX = "test_%s" % ES_INDEX
+    ES_FAMILIAS_INDEX = "test_%s" % ES_FAMILIAS_INDEX
 
 class SelecaoRealizadaException(Exception):
     pass
@@ -178,8 +182,11 @@ class Material(models.Model):
         if self.familia is not None:
             body["cod_familia"] = self.familia.cod_familia
             body["familia"] = self.familia.familia
-        es.index(index='familiasskus', doc_type='familiasskus', id=self.cod_material, body=body)
+        es.index(index=ES_FAMILIAS_INDEX, doc_type=ES_FAMILIAS_DOC_TYPE, id=self.cod_material, body=body)
 
+    def es_delete(self):
+        es = Elasticsearch()
+        es.delete(index=ES_FAMILIAS_INDEX, doc_type=ES_FAMILIAS_DOC_TYPE, id=self.cod_material)
 
 class Sugestao(models.Model):
     
