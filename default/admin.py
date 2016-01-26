@@ -5,12 +5,12 @@ from django.utils.functional import curry
 
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ['cod_material', 'material', 'familia_sugerida', 'familia_selecionada', 'multiplas_familias_selecionadas', 'familia']
+    list_display = ['cod_material', 'material', 'get_familias_sugeridas', 'familia']
     list_display_links = None
     list_editable = ['familia', ]
     search_fields = ['cod_material', 'material']
-    list_filter = ['secao__secao', 'familia_sugerida', 'familia_selecionada', 'multiplas_familias_selecionadas']
-    list_per_page = 100
+    list_filter = ['secao__secao', 'familia_sugerida', 'familia_selecionada']
+    list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
 
     def get_changelist_form(self, request, **kwargs):

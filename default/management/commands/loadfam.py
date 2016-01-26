@@ -44,7 +44,7 @@ class Command(BaseCommand):
                         )
 
                     if creado:
-                        self.stdout.write(self.style.SUCCESS(str('Familia "%s" criada com sucesso.' % str(familia).decode('ascii','ignore')).decode('ascii','ignore')))
+                        self.stdout.write(self.style.SUCCESS(str(u'Familia "%s" criada com sucesso.' % str(familia).decode('ascii','ignore')).decode('ascii','ignore')))
                     else:
                         self.stdout.write(self.style.WARNING(str('Familia "%s" ja existe.' % familia).decode('ascii','ignore')))
 

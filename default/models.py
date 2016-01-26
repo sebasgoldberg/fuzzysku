@@ -71,12 +71,16 @@ class Material(models.Model):
     cod_material = models.CharField(max_length=20, verbose_name=_(u'Cod. Material'), unique=True)
     material = models.CharField(max_length=100, verbose_name=_(u'Material'))
 
-    familia_sugerida = models.BooleanField(verbose_name=_(u'Fam. Sug.'), default=False)
-    familia_selecionada = models.BooleanField(verbose_name=_(u'Fam. Sel.'), default=False)
+    familia_sugerida = models.BooleanField(verbose_name=_(u'Familia Sugerida'), default=False)
+    familia_selecionada = models.BooleanField(verbose_name=_(u'Familia Selecionada'), default=False)
+
+    # @deprecated 
     multiplas_familias_selecionadas = models.BooleanField(verbose_name=_(u'Mult. Fam. Sel.'), default=False)
 
     secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao')
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
+
+    #familias_sugeridas = models.ManyToManyField(Familia, verbose_name=_(u'Familias Sugeridas'), related_name='familias_sugeridas_set')
 
     class Meta:
         ordering = ['material']
@@ -97,6 +101,12 @@ class Material(models.Model):
                 self,
                 self.secao,
                 ))
+
+    def get_familias_sugeridas(self):
+        return '<ul>%s</ul>' % ''.join(
+            [ '<li><a href="#" class="familia-sugerida">%s</a></li>' % x.familia for x in self.sugestao_set.all().order_by('-score') ])
+    get_familias_sugeridas.short_description = _(u'Familias Sugeridas')
+    get_familias_sugeridas.allow_tags = True
 
     def sugerir(self):
 
@@ -154,6 +164,21 @@ class Material(models.Model):
         self.sugestao_set.all().delete()
         for (score, familia) in familias:
             self.sugestao_set.create(score=score, familia=familia)
+
+    def index(self):
+        es = Elasticsearch()
+        body = {
+            "cod_material": self.cod_material,
+            "material": self.material,
+            "cod_secao": self.secao.cod_secao,
+            "secao": self.secao.secao,
+            "familia_sugerida": self.familia_sugerida,
+            "familia_selecionada": self.familia_selecionada,
+            }
+        if self.familia is not None:
+            body["cod_familia"] = self.familia.cod_familia
+            body["familia"] = self.familia.familia
+        es.index(index='familiasskus', doc_type='familiasskus', id=self.cod_material, body=body)
 
 
 class Sugestao(models.Model):

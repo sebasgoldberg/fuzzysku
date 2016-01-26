@@ -29,5 +29,12 @@
             cod_material = $(this).parents('tr').find('.field-cod_material').text();
             $(this).yourlabsAutocomplete().data = {'cod_material':cod_material};
             });
+        $('.familia-sugerida').click( function(event){
+            event.preventDefault();
+            value = $(this).text().split(' ')[0];
+            input = $(this).parents('tr').find('.field-familia input');
+            input.val(value);
+            input.change().focus();
+            });
     </script>
 {% endblock %}
