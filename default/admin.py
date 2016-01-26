@@ -26,7 +26,7 @@ class FamiliaAdmin(admin.ModelAdmin):
     list_display_links = None
     actions = None
     list_display = ['cod_familia', 'familia', 'secao', 'cod_grupo', 'grupo', 'cod_subgrupo', 'subgrupo']
-    search_fields = ['cod_familia', 'familia']
+    search_fields = ['cod_familia', 'familia', 'secao__secao', 'grupo', 'subgrupo']
     list_filter = ['secao__secao', 'grupo',]
     list_per_page = 100
 
@@ -39,7 +39,6 @@ class SugestaoAdmin(admin.ModelAdmin):
     list_filter = [ 'material__secao__secao', 'material__familia_selecionada', 'material__multiplas_familias_selecionadas']
     list_per_page = 100
 
-# Register your models here.
 admin.site.register(Secao)
 admin.site.register(Material, MaterialAdmin)
 admin.site.register(Familia, FamiliaAdmin)
