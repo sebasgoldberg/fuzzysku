@@ -17,9 +17,12 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import autocomplete_light
+from django.conf.urls import include
 
 admin.site.site_header = 'Sugestão de Familias por Material'
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
 ]

@@ -8,3 +8,13 @@ class DefaultConfig(AppConfig):
     def ready(self, *args, **kwargs):
         
         from .signals import *
+
+        """
+        import autocomplete_light.shortcuts as autocomplete_light
+
+        class DefaultConfigAutocomplete(autocomplete_light.AutocompleteListBase):
+            choices = ['a', 'b']
+
+        autocomplete_light.register(DefaultConfigAutocomplete)
+        """
+        from autocomplete_light_registry import *
