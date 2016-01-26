@@ -7,7 +7,7 @@ from models import Familia
 al.register(
     Familia,
     # Just like in ModelAdmin.search_fields.
-    search_fields=['secao__secao', 'grupo', 'subgrupo', 'familia'],
+    search_fields=['secao__secao', 'grupo', 'subgrupo', 'familia', 'cod_familia'],
     attrs={
         # This will set the input placeholder attribute:
         'placeholder': 'Other model name ?',

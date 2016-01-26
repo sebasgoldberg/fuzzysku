@@ -1,5 +1,5 @@
 from django.contrib import admin
-from default.models import Material, Familia, Sugestao
+from default.models import Secao, Material, Familia, Sugestao
 import autocomplete_light
 from django.utils.functional import curry
 
@@ -40,6 +40,7 @@ class SugestaoAdmin(admin.ModelAdmin):
     list_per_page = 100
 
 # Register your models here.
+admin.site.register(Secao)
 admin.site.register(Material, MaterialAdmin)
 admin.site.register(Familia, FamiliaAdmin)
 admin.site.register(Sugestao, SugestaoAdmin)

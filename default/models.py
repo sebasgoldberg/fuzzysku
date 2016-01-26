@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 from elasticsearch import Elasticsearch
 
@@ -85,6 +86,17 @@ class Material(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.cod_material, self.material)
+
+    def clean(self):
+        if self.familia is None:
+            return
+        if self.familia.secao.cod_secao <> self.secao.cod_secao:
+            raise ValidationError(_('A familia %s tem seção %s, mas o material %s pertece a seção %s') % (
+                self.familia,
+                self.familia.secao,
+                self,
+                self.secao,
+                ))
 
     def sugerir(self):
 
