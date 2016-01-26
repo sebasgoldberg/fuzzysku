@@ -20,6 +20,10 @@
     <script type="text/javascript">
         $(function(){
             $('.change-related').hide();
-            })
+            });
+        $('input.autocomplete').each( function(){
+            cod_material = $(this).parents('tr').find('.field-cod_material').text();
+            $(this).yourlabsAutocomplete().data = {'cod_material':cod_material};
+            });
     </script>
 {% endblock %}
