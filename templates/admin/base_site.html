@@ -34,7 +34,7 @@
             value = $(this).text().split(' ')[0];
             input = $(this).parents('tr').find('.field-familia input');
             input.val(value);
-            input.change().focus();
+            input.yourlabsAutocomplete().refresh();
             });
     </script>
 {% endblock %}
