@@ -30,16 +30,32 @@ class Command(BaseCommand):
                     register = line.split('\t')
                     for i in range(len(register)):
                         register[i] = register[i].strip()
+
+                    cod_secao = register[COD_SECAO].zfill(2)
+                    cod_grupo = register[COD_GRUPO].zfill(4)
+                    cod_subgrupo = register[COD_SUBGRUPO].zfill(6)
+                    cod_familia = register[COD_FAMILIA].zfill(9)
+
+                    if cod_secao <>  cod_grupo[0:2]:
+                        self.stdout.write(self.style.ERROR(str('ERRO: Código de seção não coincide: "%s".' % register).decode('ascii','ignore')))
+                        continue
+                    if cod_grupo <> cod_subgrupo[0:4]:
+                        self.stdout.write(self.style.ERROR(str('ERRO: Código de grupo não coincide: "%s".' % register).decode('ascii','ignore')))
+                        continue
+                    if cod_subgrupo <> cod_familia[0:6]:
+                        self.stdout.write(self.style.ERROR(str('ERRO: Código de sub grupo não coincide: "%s".' % register).decode('ascii','ignore')))
+                        continue
+
                     familia, creado = Familia.objects.get_or_create(
                         secao = Secao.objects.get_or_create(
-                            cod_secao=register[COD_SECAO],
+                            cod_secao=cod_secao,
                             secao=register[SECAO]
                             )[0],
-                        cod_grupo=register[COD_GRUPO],
+                        cod_grupo=cod_grupo,
                         grupo=register[GRUPO],
-                        cod_subgrupo=register[COD_SUBGRUPO],
+                        cod_subgrupo=cod_subgrupo,
                         subgrupo=register[SUBGRUPO],
-                        cod_familia=register[COD_FAMILIA],
+                        cod_familia=cod_familia,
                         familia=register[FAMILIA],
                         )
 
