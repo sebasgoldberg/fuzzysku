@@ -32,6 +32,7 @@
         $('.familia-sugerida').click( function(event){
             event.preventDefault();
             value = $(this).text().split(' ')[0];
+            $(this).parents('tr').find('.field-familia .remove').click();
             input = $(this).parents('tr').find('.field-familia input');
             input.val(value);
             input.yourlabsAutocomplete().refresh();

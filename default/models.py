@@ -19,7 +19,7 @@ if settings.TESTING:
     ES_INDEX = "test_%s" % ES_INDEX
     ES_FAMILIAS_INDEX = "test_%s" % ES_FAMILIAS_INDEX
 
-class SelecaoRealizadaException(Exception):
+class SecoesNaoCoincidem(ValidationError):
     pass
 
 class CodigoSecaoNaoCoincide(ValidationError):
@@ -88,9 +88,6 @@ class Material(models.Model):
     familia_sugerida = models.BooleanField(verbose_name=_(u'Familia Sugerida'), default=False)
     familia_selecionada = models.BooleanField(verbose_name=_(u'Familia Selecionada'), default=False)
 
-    # @deprecated 
-    multiplas_familias_selecionadas = models.BooleanField(verbose_name=_(u'Mult. Fam. Sel.'), default=False)
-
     secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao')
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
 
@@ -104,17 +101,6 @@ class Material(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.cod_material, self.material)
-
-    def clean(self):
-        if self.familia is None:
-            return
-        if self.familia.secao.cod_secao <> self.secao.cod_secao:
-            raise ValidationError(_('A familia %s tem seção %s, mas o material %s pertece a seção %s') % (
-                self.familia,
-                self.familia.secao,
-                self,
-                self.secao,
-                ))
 
     def get_familias_sugeridas(self):
         return '<ul>%s</ul>' % ''.join(
@@ -167,14 +153,6 @@ class Material(models.Model):
     
     def salvar_sugestoes(self, familias):
 
-        try:
-            self.sugestao_set.get(selecionado=True)
-            raise SelecaoRealizadaException()
-        except Sugestao.DoesNotExist:
-            pass
-
-        self.familia_selecionada = False
-        self.save()
         self.sugestao_set.all().delete()
         for (score, familia) in familias:
             self.sugestao_set.create(score=score, familia=familia)
@@ -203,7 +181,6 @@ class Sugestao(models.Model):
     material = models.ForeignKey(Material, verbose_name=_(u'Material'))
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'))
     score = models.FloatField(verbose_name=_(u'Pontuação'), default=0)
-    selecionado = models.BooleanField(verbose_name=_(u'Selecionado'), default=False)
 
     class Meta:
         ordering = ['material','-score']

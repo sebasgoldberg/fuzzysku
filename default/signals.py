@@ -5,6 +5,21 @@ from default.models import *
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+def validar_material(sender, instance, **kwargs):
+    if instance.familia is None:
+        return
+    if instance.familia.secao.cod_secao <> instance.secao.cod_secao:
+        raise SecoesNaoCoincidem(_(u'A familia %s tem seção %s, mas o material %s pertece a seção %s') % (
+            instance.familia,
+            instance.familia.secao,
+            instance,
+            instance.secao,
+            ))
+
+pre_save.connect(validar_material, 
+    sender=Material)
+
+
 def validar_familia(sender, instance, **kwargs):
 
     instance.cod_grupo = instance.cod_grupo.zfill(4)

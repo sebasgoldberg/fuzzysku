@@ -32,11 +32,10 @@ class FamiliaAdmin(admin.ModelAdmin):
 
 class SugestaoAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ['material', 'selecionado', 'familia', 'score']
+    list_display = ['material', 'familia', 'score']
     list_display_links = None
     search_fields = ['material__cod_material', 'material__material']
-    list_editable = ['selecionado', ]
-    list_filter = [ 'material__secao__secao', 'material__familia_selecionada', 'material__multiplas_familias_selecionadas']
+    list_filter = [ 'material__secao__secao', 'material__familia_selecionada', ]
     list_per_page = 100
 
 admin.site.register(Secao)
