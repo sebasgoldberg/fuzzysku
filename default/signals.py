@@ -72,3 +72,11 @@ post_delete.connect(es_delete_material,
     sender=Material)
 
     
+def es_index_familia(sender, instance, **kwargs):
+
+    instance.index()
+
+post_save.connect(es_index_familia, 
+    sender=Familia)
+
+

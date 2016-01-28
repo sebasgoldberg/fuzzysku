@@ -9,8 +9,7 @@ class Command(BaseCommand):
     help = 'Sugere familias de materiais por cada material.'
 
     def add_arguments(self, parser):
-        pass
-        #parser.add_argument('filepath', nargs='+')
+        parser.add_argument('cod_secao', nargs='*')
 
     def handle(self, *args, **options):
 
@@ -18,7 +17,12 @@ class Command(BaseCommand):
         quan_nao_sugeridos = 0
         quan_selecao_realizada = 0
 
-        for material in Material.objects.all():
+        if len(options['cod_secao']) == 0:
+            materiais = Material.objects.all()
+        else:
+            materiais = Material.objects.filter(secao__cod_secao__in=options['cod_secao'])
+
+        for material in materiais:
             try:
                 sugestoes = material.sugerir()
                 material.salvar_sugestoes(sugestoes)
@@ -41,4 +45,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(str('Resultados: [Sugeridos: %s] [Sem sugestões: %s] [Já selecionados: %s]' %
             (quan_sugeridos, quan_nao_sugeridos, quan_selecao_realizada) ).decode('ascii','ignore')))
         quan_tot = quan_sugeridos + quan_nao_sugeridos + quan_selecao_realizada
-        self.stdout.write(self.style.SUCCESS(str('Porcentagem de sugeridos %s%%.' % str(float((quan_sugeridos+quan_selecao_realizada)*100)/quan_tot) ).decode('ascii','ignore')))
+        if quan_tot <> 0:
+            porcentagem_sugeridos = float((quan_sugeridos+quan_selecao_realizada)*100)/quan_tot
+        else:
+            porcentagem_sugeridos = 0
+        self.stdout.write(self.style.SUCCESS(str('Porcentagem de sugeridos %s%%.' % str(porcentagem_sugeridos) ).decode('ascii','ignore')))
