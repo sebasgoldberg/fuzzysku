@@ -22,6 +22,16 @@ if settings.TESTING:
 class SelecaoRealizadaException(Exception):
     pass
 
+class CodigoSecaoNaoCoincide(ValidationError):
+    pass
+
+class CodigoGrupoNaoCoincide(ValidationError):
+    pass
+
+class CodigoSubGrupoNaoCoincide(ValidationError):
+    pass
+
+
 class Secao(models.Model):
     
     cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'), unique=True)

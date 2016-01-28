@@ -1,7 +1,33 @@
 #encoding=utf8
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
-from default.models import Sugestao, Material
+from django.db.models.signals import pre_save, post_save, post_delete
+from default.models import *
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
+
+def validar_familia(sender, instance, **kwargs):
+
+    instance.cod_grupo = instance.cod_grupo.zfill(4)
+    instance.cod_subgrupo = instance.cod_subgrupo.zfill(6)
+    instance.cod_familia = instance.cod_familia.zfill(9)
+
+    if instance.secao.cod_secao <> instance.cod_grupo[0:2]:
+        raise CodigoSecaoNaoCoincide(_(u'Código de seção não coincide'))
+    if instance.cod_grupo <> instance.cod_subgrupo[0:4]:
+        raise CodigoGrupoNaoCoincide(_(u'Código de grupo não coincide'))
+    if instance.cod_subgrupo <> instance.cod_familia[0:6]:
+        raise CodigoSubGrupoNaoCoincide(_(u'Código de sub grupo não coincide'))
+
+pre_save.connect(validar_familia, 
+    sender=Familia)
+
+
+def validar_secao(sender, instance, **kwargs):
+    instance.cod_secao = instance.cod_secao.zfill(2)
+
+pre_save.connect(validar_secao, 
+    sender=Secao)
+
 
 def update_familia_sugerida(sender, instance, **kwargs):
 
@@ -44,3 +70,5 @@ def es_delete_material(sender, instance, **kwargs):
 
 post_delete.connect(es_delete_material, 
     sender=Material)
+
+    
