@@ -1,6 +1,6 @@
 #encoding=utf8
 from django.core.management.base import BaseCommand, CommandError
-from default.models import Material, SelecaoRealizadaException
+from default.models import *
 
 COD_MATERIAL = 0
 MATERIAL = 1
