@@ -48,7 +48,7 @@ class Command(BaseCommand):
                             
                             try:
                                 user = User.objects.get(username=register[USERNAME])
-                                self.stdout.write(self.style.WARNING(ascii('Usuario "%s" ja existe.' % user)))
+                                self.stdout.write(self.style.WARNING(ascii(u'Usuario "%s" ja existe.' % user)))
                             except User.DoesNotExist:
 
                                 user = User.objects.create_user(
@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
                                 user.groups=[grupo]
                                 user.save()
-                                self.stdout.write(self.style.SUCCESS(ascii('Usuario "%s" criado com sucesso.' % user)))
+                                self.stdout.write(self.style.SUCCESS(ascii(u'Usuario "%s" criado com sucesso.' % user)))
 
                         except IntegrityError:
 

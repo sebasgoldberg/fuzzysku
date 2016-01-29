@@ -52,15 +52,15 @@ class Command(BaseCommand):
                             if creado:
                                 self.stdout.write(self.style.SUCCESS(ascii(u'Familia "%s" criada com sucesso.' % familia)))
                             else:
-                                self.stdout.write(self.style.WARNING(ascii('Familia "%s" ja existe.' % familia)))
+                                self.stdout.write(self.style.WARNING(ascii(u'Familia "%s" ja existe.' % familia)))
 
                         except CodigoSecaoNaoCoincide:
-                            self.stdout.write(self.style.ERROR(ascii('ERRO: Código de seção não coincide: "%s".' % register)))
+                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Código de seção não coincide: "%s".' % register)))
                             print(line,file=ferr)
                         except CodigoGrupoNaoCoincide:
-                            self.stdout.write(self.style.ERROR(ascii('ERRO: Código de grupo não coincide: "%s".' % register)))
+                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Código de grupo não coincide: "%s".' % register)))
                             print(line,file=ferr)
                         except CodigoSubGrupoNaoCoincide:
-                            self.stdout.write(self.style.ERROR(ascii('ERRO: Código de sub grupo não coincide: "%s".' % register)))
+                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Código de sub grupo não coincide: "%s".' % register)))
                             print(line,file=ferr)
 

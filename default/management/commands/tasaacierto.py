@@ -38,5 +38,5 @@ class Command(BaseCommand):
                     
                     quan_tot = quan_tot + 1
 
-        self.stdout.write(self.style.SUCCESS(str('Taixa de acierto %s%%.' % str(float(quan_sugeridos*100)/quan_tot) ).decode('ascii','ignore')))
+        self.stdout.write(self.style.SUCCESS(u'Taixa de acierto %s%%.' % str(float(quan_sugeridos*100)/quan_tot) ))
 

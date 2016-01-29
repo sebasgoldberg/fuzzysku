@@ -44,7 +44,7 @@ class Secao(models.Model):
         app_label = 'default'
 
     def __unicode__(self):
-        return '%s %s' % (self.cod_secao, self.secao)
+        return u'%s %s' % (self.cod_secao, self.secao)
 
 
 class Familia(models.Model):
@@ -64,7 +64,7 @@ class Familia(models.Model):
         app_label = 'default'
 
     def __unicode__(self):
-        return '%s %s' % (self.cod_familia, self.familia)
+        return u'%s %s' % (self.cod_familia, self.familia)
 
     def index(self):
         es = Elasticsearch()
@@ -100,7 +100,7 @@ class Material(models.Model):
         app_label = 'default'
 
     def __unicode__(self):
-        return '%s %s' % (self.cod_material, self.material)
+        return u'%s %s' % (self.cod_material, self.material)
 
     def get_familias_sugeridas(self):
         return '<ul>%s</ul>' % ''.join(

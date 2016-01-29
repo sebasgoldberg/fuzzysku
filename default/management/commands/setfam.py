@@ -38,12 +38,12 @@ class Command(BaseCommand):
                             m.familia = f
                             m.save()
                         except Material.DoesNotExist:
-                            self.stdout.write(self.style.ERROR(ascii('Material %s não encontrado.' % register[COD_MATERIAL] )))
+                            self.stdout.write(self.style.ERROR(ascii(u'Material %s não encontrado.' % register[COD_MATERIAL] )))
                             print(line,file=ferr)
                         except Familia.DoesNotExist:
-                            self.stdout.write(self.style.ERROR(ascii('Familia %s não encontrada.' % register[COD_FAMILIA] )))
+                            self.stdout.write(self.style.ERROR(ascii(u'Familia %s não encontrada.' % register[COD_FAMILIA] )))
                             print(line,file=ferr)
                         except SecoesNaoCoincidem:
-                            self.stdout.write(self.style.ERROR(ascii('Material %s tem seção distinta que a familia %s.' % (m,f,) )))
+                            self.stdout.write(self.style.ERROR(ascii(u'Material %s tem seção distinta que a familia %s.' % (m,f,) )))
                             print(line,file=ferr)
 

@@ -39,13 +39,13 @@ class Command(BaseCommand):
                                 )
 
                             if creado:
-                                self.stdout.write(self.style.SUCCESS(ascii('Material "%s" criado com sucesso.' % material)))
+                                self.stdout.write(self.style.SUCCESS(ascii(u'Material "%s" criado com sucesso.' % material)))
                             else:
-                                self.stdout.write(self.style.WARNING(ascii('Material "%s" ja existe.' % material)))
+                                self.stdout.write(self.style.WARNING(ascii(u'Material "%s" ja existe.' % material)))
 
                         except IntegrityError:
 
                             material = Material.objects.get(cod_material=register[COD_MATERIAL])
-                            self.stdout.write(self.style.ERROR(ascii('ERRO: Material %s já existe na seção %s y difiere do registro fornecido: "%s".' % (material, material.secao, register))))
+                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material %s já existe na seção %s y difiere do registro fornecido: "%s".' % (material, material.secao, register))))
                             print(line,file=ferr)
 
