@@ -26,14 +26,15 @@
             $('.changelink').hide();
         {% endif %}
         $('input.autocomplete').each( function(){
-            cod_material = $(this).parents('tr').find('.field-cod_material').text();
+            var material = $(this).parents('tr').find('.field-__unicode__').text();
+            var cod_material = material.split(' ')[0];
             $(this).yourlabsAutocomplete().data = {'cod_material':cod_material};
             });
         $('.familia-sugerida').click( function(event){
             event.preventDefault();
-            value = $(this).text().split(' ')[0];
+            var value = $(this).text().split(' ')[0];
             $(this).parents('tr').find('.field-familia .remove').click();
-            input = $(this).parents('tr').find('.field-familia input');
+            var input = $(this).parents('tr').find('.field-familia input');
             input.val(value);
             input.yourlabsAutocomplete().refresh();
             });

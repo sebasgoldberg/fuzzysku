@@ -31,6 +31,8 @@ class CodigoGrupoNaoCoincide(ValidationError):
 class CodigoSubGrupoNaoCoincide(ValidationError):
     pass
 
+class FamiliaJaSelecionada(ValidationError):
+    pass
 
 class Secao(models.Model):
     
@@ -64,7 +66,7 @@ class Familia(models.Model):
         app_label = 'default'
 
     def __unicode__(self):
-        return u'%s %s' % (self.cod_familia, self.familia)
+        return u'%s /%s/%s/%s' % (self.cod_familia, self.familia, self.grupo, self.subgrupo)
 
     def index(self):
         es = Elasticsearch()
@@ -187,10 +189,10 @@ class Sugestao(models.Model):
     score = models.FloatField(verbose_name=_(u'Pontuação'), default=0)
 
     class Meta:
-        ordering = ['material','-score']
+        ordering = ['familia', 'material',]
         verbose_name = _(u"Sugestão de Familias")
         verbose_name_plural = _(u"Sugestões de Familias")
-        unique_together = (('material', 'familia'),)
+        unique_together = (('familia', 'material', ),)
         app_label = 'default'
 
     def __unicode__(self):
@@ -199,3 +201,9 @@ class Sugestao(models.Model):
             'familia': self.familia,
             }
 
+    def aplicar_familia(self):
+        if self.material.familia is not None:
+            raise FamiliaJaSelecionada(_(u'Familia %s já selecionada para material %s') % (self.familia, self.material))
+        self.material.familia = self.familia
+        self.material.save()
+        self.material.refresh_from_db()
