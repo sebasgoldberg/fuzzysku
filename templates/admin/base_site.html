@@ -21,9 +21,11 @@
         {% if not user.is_superuser %}
             $(function(){
                 $('.change-related').hide();
+                $('th.column-id').hide();
+                $('th.field-id').hide();
+                $('#recent-actions-module').hide();
+                $('.changelink').hide();
                 });
-            $('#recent-actions-module').hide();
-            $('.changelink').hide();
         {% endif %}
         $('input.autocomplete').each( function(){
             var material = $(this).parents('tr').find('.field-__unicode__').text();

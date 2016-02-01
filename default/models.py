@@ -113,7 +113,6 @@ class Material(models.Model):
     def sugerir(self):
 
         es = Elasticsearch()
-        # @todo Modificar body para hacer una búsqueda fuzzy
         body={
             'query': {
                 'filtered':{
