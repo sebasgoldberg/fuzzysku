@@ -1,0 +1,32 @@
+{
+    "properties": {
+        "data": {
+            "format": "yyyy-MM-dd HH:mm:ss", 
+            "type": "date"
+        }, 
+        "cod_familia": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
+        "cod_material": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
+        "cod_secao": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
+        "material": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
+        "secao": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
+        "familia": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }
+    }
+}

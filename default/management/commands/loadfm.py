@@ -31,13 +31,26 @@ class Command(BaseCommand):
                 with open(filepath, 'r') as f:
                     header = True
                     for line in f:
+
                         if header:
                             header = False
                             continue
-                        line = line.strip()
-                        register = line.split('\t')
+
+                        register = line.strip('\r\n').split('\t')
+
+                        if len(register) <> 10:
+                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Registro com quantidade %d distinta de campos a esperada 10: "%s".' % (len(register), register))))
+                            print(line,file=ferr)
+                            continue
+
+                        if register[COD_MATERIAL] == "":
+                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material não informado: "%s"' % register)))
+                            print(line,file=ferr)
+                            continue
+
                         for i in range(len(register)):
                             register[i] = register[i].strip()
+
 
                         try:
 
@@ -116,5 +129,4 @@ class Command(BaseCommand):
                         except SecoesNaoCoincidem:
                             self.stdout.write(self.style.ERROR(ascii(u'Material %s tem seção distinta que a familia %s.' % (material,familia,) )))
                             print(line,file=ferr)
-
 

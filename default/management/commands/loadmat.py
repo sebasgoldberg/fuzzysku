@@ -39,6 +39,7 @@ class Command(BaseCommand):
                                 )
 
                             if creado:
+                                material.refresh_from_db()
                                 self.stdout.write(self.style.SUCCESS(ascii(u'Material "%s" criado com sucesso.' % material)))
                             else:
                                 self.stdout.write(self.style.WARNING(ascii(u'Material "%s" ja existe.' % material)))

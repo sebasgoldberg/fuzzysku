@@ -50,9 +50,11 @@ class Command(BaseCommand):
                                 )
 
                             if creado:
-                                self.stdout.write(self.style.SUCCESS(ascii(u'Familia "%s" criada com sucesso.' % familia)))
+                                familia.refresh_from_db()
+                                self.stdout.write(self.style.SUCCESS(u'Familia "%s" criada com sucesso.' % familia))
                             else:
                                 self.stdout.write(self.style.WARNING(ascii(u'Familia "%s" ja existe.' % familia)))
+
 
                         except CodigoSecaoNaoCoincide:
                             self.stdout.write(self.style.ERROR(ascii(u'ERRO: Código de seção não coincide: "%s".' % register)))

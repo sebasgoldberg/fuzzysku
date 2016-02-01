@@ -174,7 +174,11 @@ class Material(models.Model):
 
     def es_delete(self):
         es = Elasticsearch()
-        es.delete(index=ES_FAMILIAS_INDEX, doc_type=ES_FAMILIAS_DOC_TYPE, id=self.cod_material)
+        try:
+            es.delete(index=ES_FAMILIAS_INDEX, doc_type=ES_FAMILIAS_DOC_TYPE, id=self.cod_material)
+        # @todo NotFoundError
+        except:
+            pass
 
 class Sugestao(models.Model):
     
