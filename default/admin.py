@@ -10,7 +10,7 @@ admin.site.disable_action('delete_selected')
 
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ['__unicode__', 'get_familias_sugeridas', 'familia']
+    list_display = ['__unicode__', 'get_familias_sugeridas', 'familia', ]
     list_display_links = None
     list_editable = ['familia', ]
     search_fields = ['cod_material', 'material']
@@ -54,7 +54,7 @@ class SugestaoAdmin(admin.ModelAdmin):
     aplicar_familia.short_description = _(u'Aplicar familia')
 
     actions = ['aplicar_familia', ]
-    list_display = ['material', 'familia',]
+    list_display = ['material', 'familia', 'familia_selecionada']
     list_display_links = None
     search_fields = ['material__cod_material', 'material__material']
     list_filter = [ 'material__secao__secao', 'material__familia_selecionada', ]

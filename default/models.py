@@ -66,7 +66,7 @@ class Familia(models.Model):
         app_label = 'default'
 
     def __unicode__(self):
-        return u'%s /%s/%s/%s' % (self.cod_familia, self.familia, self.grupo, self.subgrupo)
+        return u'%s /%s/%s/%s/%s' % (self.cod_familia, self.secao.secao, self.familia, self.grupo, self.subgrupo)
 
     def index(self):
         es = Elasticsearch()
@@ -207,3 +207,9 @@ class Sugestao(models.Model):
         self.material.familia = self.familia
         self.material.save()
         self.material.refresh_from_db()
+
+    def familia_selecionada(self):
+        if self.material.familia_selecionada:
+            return u'<img src="/static/admin/img/icon-yes.svg" alt="True">'
+        return u'<img src="/static/admin/img/icon-no.svg" alt="False">'
+    familia_selecionada.allow_tags = True

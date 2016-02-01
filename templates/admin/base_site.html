@@ -38,5 +38,20 @@
             input.val(value);
             input.yourlabsAutocomplete().refresh();
             });
+        $('.paginator a').click( function(event){
+
+            if ($('.action-checkbox .action-select:checked').length > 0 ){
+                event.preventDefault();
+
+                var targetUrl = $(this).attr("href");
+
+                var response = confirm("Ainda tem modificaçãoes sem aplicar, tem certeza de querer mudar de pagina?");
+
+                if ( response == true ){
+                    window.location.href = targetUrl;
+                    }
+
+                }
+            });
     </script>
 {% endblock %}
