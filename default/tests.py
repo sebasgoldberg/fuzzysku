@@ -192,6 +192,73 @@ class MaterialTestCase(TestCase):
         self.assertEqual(material.familia_sugerida,False)
         self.assertEqual(material.familia_selecionada,False)
 
+    def test_sugerir_respetando_secoes(self):
+
+        es = Elasticsearch()
+        es.indices.delete(index=ES_INDEX, ignore=[400, 404])
+
+        secao = Secao.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO'
+        )
+
+        secao2 = Secao.objects.create(
+            cod_secao = '02',
+            secao = 'ELECTRO INDUSTRIAL'
+        )
+
+        secao3 = Secao.objects.create(
+            cod_secao = '03',
+            secao = 'ELECTRO INDUSTRIAL'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+            secoes_possiveis = '01 02'
+        )
+
+        familia = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101001',
+            familia = 'GELADEIRAS'
+        )
+
+        familia2 = Familia.objects.create(
+            secao = secao2,
+            cod_grupo = '0201',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '020101',
+            subgrupo = 'FRIO',
+            cod_familia = '020101002',
+            familia = 'GELADEIRAS INDUSTRIAIS'
+        )
+        
+ 
+        familia3 = Familia.objects.create(
+            secao = secao3,
+            cod_grupo = '0301',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '030101',
+            subgrupo = 'FRIO',
+            cod_familia = '030101002',
+            familia = 'GELADEIRAS INDUSTRIAIS'
+        )
+        
+        es.indices.refresh(index=ES_INDEX)
+
+        sugerencias = material.sugerir()
+
+        self.assertEqual(len(sugerencias), 2)
+        self.assertIn(familia, [ x[1] for x in sugerencias ])
+        self.assertIn(familia2, [ x[1] for x in sugerencias ])
+
+
+
 
 
 class SugestaoTestCase(TestCase):

@@ -150,7 +150,7 @@ class Material(models.Model):
                     'filter': {
                         'bool':{
                             'must':{
-                                'term': { 'cod_secao': str(self.secao.cod_secao), },
+                                'terms': { 'cod_secao': self.secoes_possiveis.split(u' ') , },
                                 }
                             }
                         }
