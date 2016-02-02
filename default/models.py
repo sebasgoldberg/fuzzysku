@@ -103,7 +103,8 @@ class Material(models.Model):
     familia_sugerida = models.BooleanField(verbose_name=_(u'Familia Sugerida'), default=False)
     familia_selecionada = models.BooleanField(verbose_name=_(u'Familia Selecionada'), default=False)
 
-    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao')
+    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True)
+    secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
 
     #familias_sugeridas = models.ManyToManyField(Familia, verbose_name=_(u'Familias Sugeridas'), related_name='familias_sugeridas_set')
@@ -116,6 +117,16 @@ class Material(models.Model):
 
     def __unicode__(self):
         return u'%s %s' % (self.cod_material, self.material)
+
+    def get_secoes_possiveis(self):
+        cod_secoes = self.secoes_possiveis.split(' ')
+        if len(cod_secoes) == 0 or self.secoes_possiveis == '':
+            return [self.secao]
+        return Secao.objects.filter(cod_secao__in=cod_secoes)
+    
+    @staticmethod
+    def to_secoes_posiveis(secoes):
+        return u' '.join( [ x.cod_secao for x in secoes ] )
 
     def get_familias_sugeridas(self):
         return '<ul>%s</ul>' % ''.join(
@@ -173,11 +184,18 @@ class Material(models.Model):
 
     def index(self):
         es = Elasticsearch()
+        if self.familia_selecionada:
+            cod_secao = [ self.secao.cod_secao ]
+            secao = [ self.secao.secao ]
+        else:
+            secoes_possiveis = self.get_secoes_possiveis()
+            cod_secao = [ x.cod_secao for x in secoes_possiveis]
+            secao = [ x.secao for x in secoes_possiveis]
         body = {
             "cod_material": self.cod_material,
             "material": self.material,
-            "cod_secao": self.secao.cod_secao,
-            "secao": self.secao.secao,
+            "cod_secao": cod_secao,
+            "secao": secao,
             "familia_sugerida": self.familia_sugerida,
             "familia_selecionada": self.familia_selecionada,
             }

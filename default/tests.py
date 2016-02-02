@@ -5,8 +5,8 @@ from models import *
 
 class MaterialTestCase(TestCase):
 
-    def test_consistency(self):
- 
+    def test_mesma_secao_familia(self):
+
         secao = Secao.objects.create(
             cod_secao = '01',
             secao = 'ELECTRO'
@@ -37,6 +37,105 @@ class MaterialTestCase(TestCase):
 
         with self.assertRaises(SecoesNaoCoincidem):
             material.save()
+
+    def test_secoes_possiveis_con_valor_de_secao(self):
+        
+        secao = Secao.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+            secao = secao
+        )
+
+        material.refresh_from_db()
+        self.assertEqual(material.secoes_possiveis, secao.cod_secao)
+
+    def test_secao_familia_in_secoes_possiveis(self):
+        
+        es = Elasticsearch()
+        es.indices.delete(index=ES_INDEX, ignore=[400, 404])
+
+        secao = Secao.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO'
+        )
+
+        secao2 = Secao.objects.create(
+            cod_secao = '02',
+            secao = 'ELECTRO 2'
+        )
+
+        secao3 = Secao.objects.create(
+            cod_secao = '03',
+            secao = 'ELECTRO 3'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+            secoes_possiveis = Material.to_secoes_posiveis([secao, secao2])
+        )
+
+        material.refresh_from_db()
+        secoes_possiveis = material.get_secoes_possiveis()
+        self.assertEqual(len(secoes_possiveis), 2)
+        self.assertIn(secao, secoes_possiveis)
+        self.assertIn(secao2, secoes_possiveis)
+
+        familia = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101001',
+            familia = 'GELADEIRAS'
+        )
+
+        familia2 = Familia.objects.create(
+            secao = secao2,
+            cod_grupo = '0201',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '020101',
+            subgrupo = 'FRIO',
+            cod_familia = '020101001',
+            familia = 'GELADEIRAS'
+        )
+
+        familia3 = Familia.objects.create(
+            secao = secao3,
+            cod_grupo = '0301',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '030101',
+            subgrupo = 'FRIO',
+            cod_familia = '030101001',
+            familia = 'GELADEIRAS'
+        )
+
+        material.familia = familia3
+
+        with self.assertRaises(SecoesNaoCoincidem):
+            material.save()
+
+        material.familia = familia
+        material.save()
+        material.refresh_from_db()
+        self.assertEqual(material.secao, familia.secao)
+
+        material.familia = familia2
+        material.save()
+        material.refresh_from_db()
+        self.assertEqual(material.secao, familia2.secao)
+
+        material.refresh_from_db()
+        secoes_possiveis = material.get_secoes_possiveis()
+        self.assertEqual(len(secoes_possiveis), 2)
+        self.assertIn(secao, secoes_possiveis)
+        self.assertIn(secao2, secoes_possiveis)
 
     def test_signal(self):
 
