@@ -24,4 +24,6 @@ lib/*
 lib64*
 pip-selfcheck.json
 *.err
+*.err.in
 data/*
+vendor

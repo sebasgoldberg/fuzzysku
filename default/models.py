@@ -48,6 +48,11 @@ class Secao(models.Model):
     def __unicode__(self):
         return u'%s %s' % (self.cod_secao, self.secao)
 
+    def acoes(self):
+        return u"<a href='/default/dashboard_secao?cod_secao=%s' target='_blank'>%s</a>" % (
+            self.cod_secao,_(u'Dashboard'))
+    acoes.allow_tags = True
+    acoes.short_description = _(u'Ações')
 
 class Familia(models.Model):
     
@@ -81,6 +86,14 @@ class Familia(models.Model):
             "familia": self.familia,
             }
         es.index(index=ES_INDEX, doc_type=ES_DOC_TYPE, id=self.cod_familia, body=body)
+
+    def tratar_sugeridos(self):
+        if self.sugestao_set.count() > 0:
+            return u"<a href='/admin/default/sugestao/?q=%s' target='_blank'>%s</a>" % (
+                self.cod_familia,_(u'Tratar sugeridos'))
+        return _(u'Sem açoes possivels')
+    tratar_sugeridos.allow_tags = True
+    tratar_sugeridos.short_description = _(u'Ações')
 
 class Material(models.Model):
     
@@ -212,3 +225,4 @@ class Sugestao(models.Model):
             return u'<img src="/static/admin/img/icon-yes.svg" alt="True">'
         return u'<img src="/static/admin/img/icon-no.svg" alt="False">'
     familia_selecionada.allow_tags = True
+    familia_selecionada.short_description = _(u'Familia já selecionada')

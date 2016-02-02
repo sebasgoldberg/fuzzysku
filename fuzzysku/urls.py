@@ -23,6 +23,7 @@ from django.conf.urls import include
 admin.site.site_header = 'Sugestão de Familias por Material'
 
 urlpatterns = [
+    url(r'^default/', include('default.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
 ]

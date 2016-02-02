@@ -1,10 +1,13 @@
 {% extends "admin/base.html" %}
 {% load static %}
+{% load staticfiles %}
 
 {% block extrahead %}
     {{ block.super }}
     <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}" type="text/javascript"></script>
     {% include 'autocomplete_light/static.html' %}
+    <link rel="stylesheet" href="{% static 'default/js/vendor/jquery-ui/jquery-ui.css' %}">
+    <script src="{% static 'default/js/vendor/jquery-ui/jquery-ui.min.js' %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block title %} {{_('Sugestão de Familias por Material')}} | {{ title }} {% endblock %}
@@ -18,42 +21,60 @@
 {% block footer %}
     {{ block.super }}
     <script type="text/javascript">
-        {% if not user.is_superuser %}
-            $(function(){
+        $(function(){
+            {% if not user.is_superuser %}
                 $('.change-related').hide();
                 $('th.column-id').hide();
                 $('th.field-id').hide();
                 $('#recent-actions-module').hide();
                 $('.changelink').hide();
+            {% endif %}
+            $('input.autocomplete').each( function(){
+                var material = $(this).parents('tr').find('.field-__unicode__').text();
+                var cod_material = material.split(' ')[0];
+                $(this).yourlabsAutocomplete().data = {'cod_material':cod_material};
                 });
-        {% endif %}
-        $('input.autocomplete').each( function(){
-            var material = $(this).parents('tr').find('.field-__unicode__').text();
-            var cod_material = material.split(' ')[0];
-            $(this).yourlabsAutocomplete().data = {'cod_material':cod_material};
-            });
-        $('.familia-sugerida').click( function(event){
-            event.preventDefault();
-            var value = $(this).text().split(' ')[0];
-            $(this).parents('tr').find('.field-familia .remove').click();
-            var input = $(this).parents('tr').find('.field-familia input');
-            input.val(value);
-            input.yourlabsAutocomplete().refresh();
-            });
-        $('.paginator a').click( function(event){
-
-            if ($('.action-checkbox .action-select:checked').length > 0 ){
+            $('.familia-sugerida').click( function(event){
                 event.preventDefault();
+                var value = $(this).text().split(' ')[0];
+                $(this).parents('tr').find('.field-familia .remove').click();
+                var input = $(this).parents('tr').find('.field-familia input');
+                input.val(value);
+                input.yourlabsAutocomplete().refresh();
+                });
+            $('.paginator a').click( function(event){
 
-                var targetUrl = $(this).attr("href");
+                if ($('.action-checkbox .action-select:checked').length > 0 ){
+                    event.preventDefault();
 
-                var response = confirm("Ainda tem modificaçãoes sem aplicar, tem certeza de querer mudar de pagina?");
+                    var targetUrl = $(this).attr("href");
 
-                if ( response == true ){
-                    window.location.href = targetUrl;
+                    $( "#dialog-sem-gravar" ).dialog({
+                        resizable: false,
+                        height:200,
+                        width:600,
+                        modal: true,
+                        buttons: {
+                            "Melhor vou gravar as modificações": function() {
+                                $( this ).dialog( "close" );
+                                },
+                            "Quero mudar de pagina mesmo": function() {
+                                window.location.href = targetUrl;
+                                },
+                            }
+                        });
+
                     }
 
-                }
+                });
+            $('#dialog-sem-gravar').hide();
             });
     </script>
+
+    <div id="dialog-sem-gravar" title="Mofificações ainda não aplicadas">
+        <p>
+            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+            Ainda tem modificaçãoes sem aplicar, tem certeza de querer mudar de pagina?
+        </p>
+    </div>
 {% endblock %}

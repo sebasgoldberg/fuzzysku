@@ -10,6 +10,14 @@ from django.contrib.contenttypes.models import ContentType
 
 admin.site.disable_action('delete_selected')
 
+class SecaoAdmin(admin.ModelAdmin):
+    list_display_links = ['id']
+    actions = None
+    list_display = ['id', 'cod_secao', 'secao', 'acoes']
+    search_fields = ['cod_secao', 'secao', ]
+    list_filter = []
+    list_per_page = 40
+
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
     list_display = ['id', '__unicode__', 'get_familias_sugeridas', 'familia', ]
@@ -32,10 +40,10 @@ class MaterialAdmin(admin.ModelAdmin):
 class FamiliaAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     actions = None
-    list_display = ['id', 'cod_familia', 'familia', 'secao', 'cod_grupo', 'grupo', 'cod_subgrupo', 'subgrupo']
+    list_display = ['id', 'cod_familia', 'familia', 'secao', 'cod_grupo', 'grupo', 'cod_subgrupo', 'subgrupo', 'tratar_sugeridos']
     search_fields = ['cod_familia', 'familia', 'secao__secao', 'grupo', 'subgrupo']
     list_filter = ['secao__secao',]
-    list_per_page = 100
+    list_per_page = 40
 
 class SugestaoAdmin(admin.ModelAdmin):
 
@@ -67,9 +75,9 @@ class SugestaoAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     search_fields = ['material__cod_material', 'material__material', 'familia__cod_familia', 'familia__familia']
     list_filter = [ 'material__secao__secao', 'material__familia_selecionada', ]
-    list_per_page = 100
+    list_per_page = 40
 
-admin.site.register(Secao)
+admin.site.register(Secao, SecaoAdmin)
 admin.site.register(Material, MaterialAdmin)
 admin.site.register(Familia, FamiliaAdmin)
 admin.site.register(Sugestao, SugestaoAdmin)
