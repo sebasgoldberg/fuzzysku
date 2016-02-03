@@ -3,6 +3,30 @@ from django.test import TestCase
 
 from models import *
 
+class SecaoTestCase(TestCase):
+
+    def test_completa_com_zeros(self):
+
+        secao = Secao.objects.create(
+            cod_secao = '1',
+            secao = 'ELECTRO'
+        )
+
+        secao.refresh_from_db()
+
+        self.assertEqual(secao.cod_secao,u'01')
+
+        secao = SecaoSAP.objects.create(
+            cod_secao = '',
+            secao = 'ELECTRO'
+        )
+
+        secao.refresh_from_db()
+
+        self.assertEqual(secao.cod_secao,u'00')
+
+
+
 class MaterialTestCase(TestCase):
 
     def test_mesma_secao_familia(self):

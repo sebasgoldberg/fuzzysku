@@ -49,6 +49,9 @@ def validar_secao(sender, instance, **kwargs):
 pre_save.connect(validar_secao, 
     sender=Secao)
 
+pre_save.connect(validar_secao, 
+    sender=SecaoSAP)
+
 
 def update_familia_sugerida(sender, instance, **kwargs):
 

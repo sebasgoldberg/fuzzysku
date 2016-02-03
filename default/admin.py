@@ -59,6 +59,9 @@ class SecaoAdmin(admin.ModelAdmin):
     list_filter = []
     list_per_page = 40
 
+class SecaoSAPAdmin(SecaoAdmin):
+    filter_horizontal = ['secoes_destino_possiveis']
+
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
     list_display = ['id', '__unicode__', 'get_familias_sugeridas', 'familia', ]
@@ -120,6 +123,7 @@ class SugestaoAdmin(admin.ModelAdmin):
     list_per_page = 40
 
 admin.site.register(Secao, SecaoAdmin)
+admin.site.register(SecaoSAP, SecaoSAPAdmin)
 admin.site.register(Material, MaterialAdmin)
 admin.site.register(Familia, FamiliaAdmin)
 admin.site.register(Sugestao, SugestaoAdmin)

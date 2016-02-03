@@ -34,7 +34,7 @@ class CodigoSubGrupoNaoCoincide(ValidationError):
 class FamiliaJaSelecionada(ValidationError):
     pass
 
-class Secao(models.Model):
+class BaseSecao(models.Model):
     
     cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'), unique=True)
     secao = models.CharField(max_length=100, verbose_name=_(u'Seção'))
@@ -44,6 +44,7 @@ class Secao(models.Model):
         verbose_name = _(u"Seção")
         verbose_name_plural = _(u"Seções")
         app_label = 'default'
+        abstract = True
 
     def __unicode__(self):
         return u'%s %s' % (self.cod_secao, self.secao)
@@ -53,6 +54,20 @@ class Secao(models.Model):
             self.cod_secao,_(u'Dashboard'))
     acoes.allow_tags = True
     acoes.short_description = _(u'Ações')
+
+
+class Secao(BaseSecao):
+    pass
+
+
+class SecaoSAP(BaseSecao):
+    secoes_destino_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Novas Possiveis'))
+
+    class Meta(BaseSecao.Meta):
+        verbose_name = _(u"Seção SAP")
+        verbose_name_plural = _(u"Seções SAP")
+        app_label = 'default'
+
 
 class Familia(models.Model):
     
