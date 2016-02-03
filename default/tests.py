@@ -44,8 +44,9 @@ class MaterialTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secao = secao
         )
+
+        material.secoes_possiveis.add(secao)
 
         familia = Familia.objects.create(
             secao = secao2,
@@ -72,11 +73,12 @@ class MaterialTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secao = secao
         )
 
+        material.secoes_possiveis.add(secao)
+
         material.refresh_from_db()
-        self.assertEqual(material.secoes_possiveis, secao.cod_secao)
+        self.assertIn(secao, material.secoes_possiveis.all())
 
     def test_secao_familia_in_secoes_possiveis(self):
         
@@ -101,14 +103,15 @@ class MaterialTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secoes_possiveis = Material.to_secoes_posiveis([secao, secao2])
         )
+
+        material.secoes_possiveis.add(secao, secao2)
 
         material.refresh_from_db()
         secoes_possiveis = material.get_secoes_possiveis()
-        self.assertEqual(len(secoes_possiveis), 2)
-        self.assertIn(secao, secoes_possiveis)
-        self.assertIn(secao2, secoes_possiveis)
+        self.assertEqual(secoes_possiveis.count(), 2)
+        self.assertIn(secao, secoes_possiveis.all())
+        self.assertIn(secao2, secoes_possiveis.all())
 
         familia = Familia.objects.create(
             secao = secao,
@@ -148,18 +151,18 @@ class MaterialTestCase(TestCase):
         material.familia = familia
         material.save()
         material.refresh_from_db()
-        self.assertEqual(material.secao, familia.secao)
+        self.assertIn(familia.secao, material.secoes_possiveis.all())
 
         material.familia = familia2
         material.save()
         material.refresh_from_db()
-        self.assertEqual(material.secao, familia2.secao)
+        self.assertIn(familia2.secao, material.secoes_possiveis.all())
 
         material.refresh_from_db()
         secoes_possiveis = material.get_secoes_possiveis()
-        self.assertEqual(len(secoes_possiveis), 2)
-        self.assertIn(secao, secoes_possiveis)
-        self.assertIn(secao2, secoes_possiveis)
+        self.assertEqual(secoes_possiveis.count(), 2)
+        self.assertIn(secao, secoes_possiveis.all())
+        self.assertIn(secao2, secoes_possiveis.all())
 
     def test_signal(self):
 
@@ -171,8 +174,9 @@ class MaterialTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secao = secao
         )
+
+        material.secoes_possiveis.add(secao)
 
         familia = Familia.objects.create(
             secao = secao,
@@ -239,8 +243,9 @@ class MaterialTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secoes_possiveis = '01 02'
         )
+
+        material.secoes_possiveis.add(secao, secao2)
 
         familia = Familia.objects.create(
             secao = secao,
@@ -300,8 +305,9 @@ class SugestaoTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secao = secao
         )
+
+        material.secoes_possiveis.add(secao)
 
         familia = Familia.objects.create(
             secao = secao,
@@ -347,8 +353,9 @@ class SugestaoTestCase(TestCase):
         material = Material.objects.create(
             cod_material = '0001',
             material = 'GELADEIRA',
-            secao = secao
         )
+
+        material.secoes_possiveis.add(secao)
 
         familia = Familia.objects.create(
             secao = secao,

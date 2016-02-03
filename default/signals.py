@@ -6,21 +6,15 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 def validar_material(sender, instance, **kwargs):
-    secoes_possiveis = instance.get_secoes_possiveis()
-    if instance.secao is None:
-        instance.secao = secoes_possiveis[0]
-    if instance.secoes_possiveis == '':
-        instance.secoes_possiveis = instance.secao.cod_secao
     if instance.familia is None:
         return
-    if instance.familia.secao not in secoes_possiveis:
+    if not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
         raise SecoesNaoCoincidem(_(u'A familia %s tem seção %s, mas o material %s pertece a seções %s') % (
             instance.familia,
             instance.familia.secao,
             instance,
-            secoes_possiveis,
+            list(instance.secoes_possiveis.all()),
             ))
-    instance.secao = instance.familia.secao
 
 pre_save.connect(validar_material, 
     sender=Material)

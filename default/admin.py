@@ -119,7 +119,7 @@ class SugestaoAdmin(admin.ModelAdmin):
     list_display = ['id', 'familia_selecionada', 'material', 'familia']
     list_display_links = ['id']
     search_fields = ['material__cod_material', 'material__material', 'familia__cod_familia', 'familia__familia']
-    list_filter = [ 'material__secao__secao', 'material__familia_selecionada', ]
+    list_filter = [ 'material__secoes_possiveis', 'material__familia_selecionada', ]
     list_per_page = 40
 
 admin.site.register(Secao, SecaoAdmin)

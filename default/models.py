@@ -128,8 +128,9 @@ class Material(models.Model):
     familia_sugerida = models.BooleanField(verbose_name=_(u'Familia Sugerida'), default=False)
     familia_selecionada = models.BooleanField(verbose_name=_(u'Familia Selecionada'), default=False)
 
-    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True)
-    secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
+    #secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True)
+    #secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
+    secoes_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Possiveis'))
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
 
     #familias_sugeridas = models.ManyToManyField(Familia, verbose_name=_(u'Familias Sugeridas'), related_name='familias_sugeridas_set')
@@ -144,10 +145,7 @@ class Material(models.Model):
         return u'%s %s' % (self.cod_material, self.material)
 
     def get_secoes_possiveis(self):
-        cod_secoes = self.secoes_possiveis.split(' ')
-        if len(cod_secoes) == 0 or self.secoes_possiveis == '':
-            return [self.secao]
-        return Secao.objects.filter(cod_secao__in=cod_secoes)
+        return self.secoes_possiveis
     
     @staticmethod
     def to_secoes_posiveis(secoes):
@@ -175,7 +173,7 @@ class Material(models.Model):
                     'filter': {
                         'bool':{
                             'must':{
-                                'terms': { 'cod_secao': self.secoes_possiveis.split(u' ') , },
+                                'terms': { 'cod_secao': [x.cod_secao for x in self.secoes_possiveis.all()] , },
                                 }
                             }
                         }
@@ -210,12 +208,15 @@ class Material(models.Model):
     def index(self):
         es = Elasticsearch()
         if self.familia_selecionada:
-            cod_secao = [ self.secao.cod_secao ]
-            secao = [ self.secao.secao ]
+            cod_secao = [ self.familia.secao.cod_secao ]
+            secao = [ self.familia.secao.secao ]
         else:
-            secoes_possiveis = self.get_secoes_possiveis()
-            cod_secao = [ x.cod_secao for x in secoes_possiveis]
-            secao = [ x.secao for x in secoes_possiveis]
+            cod_secao = [ ]
+            secao = [ ]
+            for x in self.secoes_possiveis.all():
+                cod_secao.append(x.cod_secao)
+                secao.append(x.secao)
+
         body = {
             "cod_material": self.cod_material,
             "material": self.material,
