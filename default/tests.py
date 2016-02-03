@@ -3,6 +3,20 @@ from django.test import TestCase
 
 from models import *
 
+class SecaoSAPTestCase(TestCase):
+
+    def test_completa_com_zeros(self):
+
+        secao = SecaoSAP.objects.create(
+            cod_secao = '',
+            secao = 'ELECTRO'
+        )
+
+        secao.refresh_from_db()
+
+        self.assertEqual(secao.cod_secao,u'00')
+
+
 class SecaoTestCase(TestCase):
 
     def test_completa_com_zeros(self):
@@ -16,18 +30,78 @@ class SecaoTestCase(TestCase):
 
         self.assertEqual(secao.cod_secao,u'01')
 
-        secao = SecaoSAP.objects.create(
-            cod_secao = '',
+
+class MaterialTestCase(TestCase):
+
+    def atualiza_secoes_possiveis_desde_secao_SAP(self):
+
+        secao = Secao.objects.create(
+            cod_secao = '01',
             secao = 'ELECTRO'
         )
 
-        secao.refresh_from_db()
+        secao2 = Secao.objects.create(
+            cod_secao = '02',
+            secao = 'ELECTRO 2'
+        )
 
-        self.assertEqual(secao.cod_secao,u'00')
+        secao3 = Secao.objects.create(
+            cod_secao = '03',
+            secao = 'ELECTRO 3'
+        )
 
+        secao_SAP = SecaoSAP.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO SAP'
+        )
 
+        secao_SAP.secoes_destino_possiveis.add(secao, secao2)
 
-class MaterialTestCase(TestCase):
+        secao_SAP2 = SecaoSAP.objects.create(
+            cod_secao = '02',
+            secao = 'ELECTRO SAP 2'
+        )
+
+        secao_SAP2.secoes_destino_possiveis.add(secao3)
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+            secao_SAP = secao_SAP
+        )
+
+        self.assertEqual(material.secoes_possiveis.count(),2)
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao.pk).exists())
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao2.pk).exists())
+
+        material.secao_SAP = secao_SAP2
+        material.save()
+
+        material.refresh_from_db()
+        self.assertEqual(material.secoes_possiveis.count(),1)
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao3.pk).exists())
+
+        material.secao_SAP = None
+        material.save()
+
+        material.refresh_from_db()
+        self.assertEqual(material.secoes_possiveis.count(),1)
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao3.pk).exists())
+
+        material.secoes_possiveis.add(secao)
+
+        self.assertEqual(material.secoes_possiveis.count(),2)
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao.pk).exists())
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao3.pk).exists())
+
+        material.secao_SAP = secao_SAP2
+        material.save()
+
+        material.refresh_from_db()
+        self.assertEqual(material.secoes_possiveis.count(),2)
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao.pk).exists())
+        self.assertTrue(material.secoes_possiveis.filter(pk=secao2.pk).exists())
+
 
     def test_mesma_secao_familia(self):
 
@@ -163,6 +237,9 @@ class MaterialTestCase(TestCase):
         self.assertEqual(secoes_possiveis.count(), 2)
         self.assertIn(secao, secoes_possiveis.all())
         self.assertIn(secao2, secoes_possiveis.all())
+
+        with self.assertRaises(SecoesNaoCoincidem):
+            material.secoes_possiveis = [secao]
 
     def test_signal(self):
 

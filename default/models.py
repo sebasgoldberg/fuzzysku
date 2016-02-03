@@ -132,6 +132,7 @@ class Material(models.Model):
     #secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
     secoes_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Possiveis'))
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
+    secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True)
 
     #familias_sugeridas = models.ManyToManyField(Familia, verbose_name=_(u'Familias Sugeridas'), related_name='familias_sugeridas_set')
 

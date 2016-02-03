@@ -1,11 +1,22 @@
 #encoding=utf8
 from django.dispatch import receiver
-from django.db.models.signals import pre_save, post_save, post_delete
+from django.db.models.signals import pre_save, post_save, post_delete, m2m_changed
 from default.models import *
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-def validar_material(sender, instance, **kwargs):
+ELIMINAR_SECOES_EXISTENTES = False
+
+def material_pre_save(sender, instance, **kwargs):
+    if instance.pk is not None:
+        if instance.secao_SAP is not None:
+            material_in_db = Material.objects.get(pk=instance.pk)
+            if material_in_db.secao_SAP <> instance.secao_SAP:
+                if ELIMINAR_SECOES_EXISTENTES:
+                    instance.secao_SAP.secoes_destino_possiveis.delete()
+                for secao in instance.secao_SAP.secoes_destino_possiveis.all():
+                    instance.secoes_possiveis.add(secao)
+
     if instance.familia is None:
         return
     if not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
@@ -16,8 +27,25 @@ def validar_material(sender, instance, **kwargs):
             list(instance.secoes_possiveis.all()),
             ))
 
-pre_save.connect(validar_material, 
+pre_save.connect(material_pre_save, 
     sender=Material)
+
+
+def secoes_possiveis_changed(sender, instance, action, **kwargs):
+    if not ( ( action == 'post_remove' ) or ( action == 'pre_remove' ) ):
+        return
+    if instance.familia is None:
+        return
+    if not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
+        raise SecoesNaoCoincidem(_(u'A familia %s tem seção %s, mas o material %s pertece a seções %s') % (
+            instance.familia,
+            instance.familia.secao,
+            instance,
+            list(instance.secoes_possiveis.all()),
+            ))
+
+m2m_changed.connect(secoes_possiveis_changed,
+    sender=Material.secoes_possiveis.through)
 
 
 def validar_familia(sender, instance, **kwargs):
@@ -63,23 +91,28 @@ post_delete.connect(update_familia_sugerida,
     sender=Sugestao)
 
 
-def update_familia_selecionada(sender, instance, **kwargs):
+def update_material_post_save(sender, instance, created, **kwargs):
+
+    save = False
 
     familia_selecionada = (instance.familia is not None)
 
     if instance.familia_selecionada <> familia_selecionada:
         instance.familia_selecionada = familia_selecionada
+        save = True
         instance.save()
 
-post_save.connect(update_familia_selecionada, 
-    sender=Material)
+    if created and instance.secao_SAP is not None:
+        for secao in instance.secao_SAP.secoes_destino_possiveis.all():
+            instance.secoes_possiveis.add(secao)
+        save = True
 
-
-def es_index_material(sender, instance, **kwargs):
+    if save:
+        instance.save()
 
     instance.index()
 
-post_save.connect(es_index_material, 
+post_save.connect(update_material_post_save, 
     sender=Material)
 
 
