@@ -12,11 +12,19 @@
             "index": "not_analyzed", 
             "type": "string"
         }, 
+        "cod_secao_SAP": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
         "cod_secao": {
             "index": "not_analyzed", 
             "type": "string"
         }, 
         "material": {
+            "index": "not_analyzed", 
+            "type": "string"
+        }, 
+        "secao_SAP": {
             "index": "not_analyzed", 
             "type": "string"
         }, 

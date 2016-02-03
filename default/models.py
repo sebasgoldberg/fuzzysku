@@ -226,6 +226,9 @@ class Material(models.Model):
             "familia_sugerida": self.familia_sugerida,
             "familia_selecionada": self.familia_selecionada,
             }
+        if self.secao_SAP is not None:
+            body["cod_secao_SAP"] = self.secao_SAP.cod_secao
+            body["secao_SAP"] = self.secao_SAP.secao
         if self.familia is not None:
             body["cod_familia"] = self.familia.cod_familia
             body["familia"] = self.familia.familia
