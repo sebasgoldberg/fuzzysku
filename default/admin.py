@@ -10,20 +10,6 @@ from django.contrib.contenttypes.models import ContentType
 
 admin.site.disable_action('delete_selected')
 
-class SecaoListFilter(admin.SimpleListFilter):
-    title = _(u'Secao')
-    parameter_name = 'secao'
-
-    def lookups(self, request, model_admin):
-        return (
-            (x.cod_secao, x.secao) for x in Secao.objects.all()
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() is None:
-            return queryset
-        return queryset.filter(secoes_possiveis__contains=self.value())
-
 class SugeridosJaTratadosListFilter(admin.SimpleListFilter):
     title = _(u'Sugeridos já tratados')
     parameter_name = 'sugeridos_ja_tratados'
@@ -68,7 +54,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     list_editable = ['familia', ]
     search_fields = ['cod_material', 'material']
-    list_filter = ['familia_sugerida', 'familia_selecionada', SecaoListFilter]
+    list_filter = ['familia_sugerida', 'familia_selecionada', 'familia__secao', 'secoes_possiveis']
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
 

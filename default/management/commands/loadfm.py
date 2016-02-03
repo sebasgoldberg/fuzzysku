@@ -100,8 +100,9 @@ class Command(BaseCommand):
                                 material, creado = Material.objects.get_or_create(
                                     cod_material=register[COD_MATERIAL],
                                     material=register[MATERIAL],
-                                    secao=secao
                                     )
+                                
+                                material.secoes_possiveis.add(secao)
 
                                 if creado:
                                     material.refresh_from_db()
@@ -110,7 +111,7 @@ class Command(BaseCommand):
                                     self.stdout.write(self.style.WARNING(ascii(u'Material "%s" ja existe.' % material)))
                             except IntegrityError:
                                 material = Material.objects.get(cod_material=register[COD_MATERIAL])
-                                self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material %s já existe na seção %s e difiere do registro fornecido: "%s".' % (material, material.secao, register))))
+                                self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material %s já existe na seção %s e difiere do registro fornecido: "%s".' % (material, material.secoes_possiveis.all(), register))))
                                 print(line,file=ferr)
                                 continue
 
