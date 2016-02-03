@@ -67,7 +67,22 @@
                     }
 
                 });
+
             $('#dialog-sem-gravar').hide();
+
+            $('input.familia-aplicada').button();
+            $('input.familia-aplicada').click(function(e){
+                var span = $(this).next().find('span');
+                var img_familia_selecionada = $(this).parents('tr').find('td.field-familia_selecionada img')
+                if ($(this).prop('checked')){
+                    span.html('Aplicada');
+                    img_familia_selecionada.prop('src','/static/admin/img/icon-yes.svg');
+                    }else{
+                    span.html('Não aplic.');
+                    img_familia_selecionada.prop('src','/static/admin/img/icon-no.svg');
+                    }
+                });
+
             });
     </script>
 

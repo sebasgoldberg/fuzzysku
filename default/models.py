@@ -88,12 +88,22 @@ class Familia(models.Model):
         es.index(index=ES_INDEX, doc_type=ES_DOC_TYPE, id=self.cod_familia, body=body)
 
     def tratar_sugeridos(self):
-        if self.sugestao_set.count() > 0:
-            return u"<a href='/admin/default/sugestao/?q=%s' target='_blank'>%s</a>" % (
-                self.cod_familia,_(u'Tratar sugeridos'))
+        if self.sugestao_set.exists():
+            if self.sugestao_set.filter(material__familia_selecionada=False).exists():
+                return u"<a href='/admin/default/sugestao/?q=%s' target='_blank'>%s</a>" % (
+                    self.cod_familia,_(u'Tratar sugeridos'))
+            return _(u'Sugeridos já tratados')
         return _(u'Sem açoes possivels')
     tratar_sugeridos.allow_tags = True
     tratar_sugeridos.short_description = _(u'Ações')
+
+    def sugeridos_ja_tratados(self):
+        if self.sugestao_set.filter(material__familia_selecionada=False).exists():
+            return u'<img src="/static/admin/img/icon-no.svg" alt="False">'
+        return u'<img src="/static/admin/img/icon-yes.svg" alt="True">'
+    sugeridos_ja_tratados.allow_tags = True
+    sugeridos_ja_tratados.short_description = _(u'Sugeridos já tratados')
+
 
 class Material(models.Model):
     
@@ -244,3 +254,14 @@ class Sugestao(models.Model):
         return u'<img src="/static/admin/img/icon-no.svg" alt="False">'
     familia_selecionada.allow_tags = True
     familia_selecionada.short_description = _(u'Familia já selecionada')
+
+    def familia_aplicada(self):
+        if self.material.familia_selecionada and self.familia.id == self.material.familia.id:
+            value = u'checked'
+            texto = _(u'Aplicada')
+        else:
+            value = u''
+            texto = _(u'Não aplic.')
+        return u'<input type="checkbox" class="familia-aplicada" id="check-%s" value="%s"><label for="check-%s">%s</label>' % (self.id, value, self.id, texto)
+    familia_aplicada.allow_tags = True
+    familia_aplicada.short_description = _(u'Familia aplicada')

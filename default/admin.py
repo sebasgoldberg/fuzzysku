@@ -24,6 +24,33 @@ class SecaoListFilter(admin.SimpleListFilter):
             return queryset
         return queryset.filter(secoes_possiveis__contains=self.value())
 
+class SugeridosJaTratadosListFilter(admin.SimpleListFilter):
+    title = _(u'Sugeridos já tratados')
+    parameter_name = 'sugeridos_ja_tratados'
+
+    def lookups(self, request, model_admin):
+        return (
+            (0, _(u'Não')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        familias_ids = [f.id for f in Familia.objects.raw( """
+            select default_familia.id
+            from default_familia
+            where exists (
+                select default_sugestao.id
+                from default_sugestao inner join default_material
+                on default_sugestao.material_id = default_material.id
+                where
+                    default_sugestao.familia_id = default_familia.id and
+                    default_material.familia_selecionada = false
+            )
+            """)]
+        return queryset.filter(id__in=familias_ids)
+
+
 class SecaoAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     actions = None
@@ -54,9 +81,9 @@ class MaterialAdmin(admin.ModelAdmin):
 class FamiliaAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     actions = None
-    list_display = ['id', 'cod_familia', 'familia', 'secao', 'cod_grupo', 'grupo', 'cod_subgrupo', 'subgrupo', 'tratar_sugeridos']
+    list_display = ['id', 'sugeridos_ja_tratados', 'tratar_sugeridos', 'cod_familia', 'familia', 'secao', 'cod_grupo', 'grupo', 'cod_subgrupo', 'subgrupo', ]
     search_fields = ['cod_familia', 'familia', 'secao__secao', 'grupo', 'subgrupo']
-    list_filter = ['secao__secao',]
+    list_filter = ['secao__secao', SugeridosJaTratadosListFilter]
     list_per_page = 40
 
 class SugestaoAdmin(admin.ModelAdmin):
@@ -85,6 +112,7 @@ class SugestaoAdmin(admin.ModelAdmin):
     aplicar_familia.short_description = _(u'Aplicar familia')
 
     actions = ['aplicar_familia', ]
+    #list_display = ['id', 'familia_selecionada', 'familia_aplicada', 'material', 'familia']
     list_display = ['id', 'familia_selecionada', 'material', 'familia']
     list_display_links = ['id']
     search_fields = ['material__cod_material', 'material__material', 'familia__cod_familia', 'familia__familia']
