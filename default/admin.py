@@ -47,6 +47,7 @@ class SecaoAdmin(admin.ModelAdmin):
 
 class SecaoSAPAdmin(SecaoAdmin):
     filter_horizontal = ['secoes_destino_possiveis']
+    list_display = ['id', 'cod_secao', 'secao',]
 
 class MaterialAdmin(admin.ModelAdmin):
     actions = None

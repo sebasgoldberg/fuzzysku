@@ -29,6 +29,8 @@ class Command(BaseCommand):
                             continue
                         line = line.strip()
                         register = line.split(';')
+                        if len(register) <> 5:
+                            continue
                         for i in range(len(register)):
                             register[i] = register[i].strip().strip('"')
 
@@ -59,7 +61,7 @@ class Command(BaseCommand):
                                 material=register[MATERIAL],
                                 secao_SAP = secao_SAP
                                 )
-                            
+
                             for secao in secao_SAP.secoes_destino_possiveis.all():
                                 material.secoes_possiveis.add(secao)
 
@@ -71,7 +73,15 @@ class Command(BaseCommand):
 
                         except IntegrityError:
 
-                            material = Material.objects.get(cod_material=register[COD_MATERIAL])
-                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material %s já existe na seção %s y difiere do registro fornecido: "%s".' % (material, material.secoes_possiveis.all(), register))))
-                            print(line,file=ferr)
+                            try:
+
+                                material = Material.objects.get(cod_material=register[COD_MATERIAL])
+                                material.secao_SAP = secao_SAP
+                                material.save()
+                                self.stdout.write(self.style.WARNING(ascii(u'Material "%s" ja existe.' % material)))
+
+                            except:
+
+                                self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material %s já existe na seção %s y difiere do registro fornecido: "%s". Ao tentar atualizar a Seção SAP ocurriou um erro.' % (material, material.secoes_possiveis.all(), register))))
+                                print(line,file=ferr)
 
