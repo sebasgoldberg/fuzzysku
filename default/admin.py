@@ -58,6 +58,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_filter = ['familia_sugerida', 'familia_selecionada', 'familia__secao', 'secoes_possiveis',]
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
+    filter_horizontal = ['secoes_possiveis']
 
     def get_changelist_form(self, request, **kwargs):
         defaults = {
