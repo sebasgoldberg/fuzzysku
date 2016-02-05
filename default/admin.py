@@ -55,7 +55,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     list_editable = ['familia', ]
     search_fields = ['cod_material', 'material']
-    list_filter = ['familia_sugerida', 'familia_selecionada', 'familia__secao', 'secoes_possiveis',]
+    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis',]
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
     filter_horizontal = ['secoes_possiveis']
@@ -74,7 +74,7 @@ class FamiliaAdmin(admin.ModelAdmin):
     actions = None
     list_display = ['id', 'sugeridos_ja_tratados', 'tratar_sugeridos', 'cod_familia', 'familia', 'secao', 'cod_grupo', 'grupo', 'cod_subgrupo', 'subgrupo', ]
     search_fields = ['cod_familia', 'familia', 'secao__secao', 'grupo', 'subgrupo']
-    list_filter = ['secao__secao', SugeridosJaTratadosListFilter]
+    list_filter = [SugeridosJaTratadosListFilter, 'secao__secao', ]
     list_per_page = 40
 
 class SugestaoAdmin(admin.ModelAdmin):
@@ -107,7 +107,7 @@ class SugestaoAdmin(admin.ModelAdmin):
     list_display = ['id', 'familia_selecionada', 'material', 'familia']
     list_display_links = ['id']
     search_fields = ['material__cod_material', 'material__material', 'familia__cod_familia', 'familia__familia']
-    list_filter = [ 'material__secoes_possiveis', 'material__familia_selecionada', ]
+    list_filter = [ 'material__familia_selecionada', 'familia__secao', ]
     list_per_page = 40
 
 admin.site.register(Secao, SecaoAdmin)

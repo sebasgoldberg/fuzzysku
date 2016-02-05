@@ -28,6 +28,7 @@
                 $('th.field-id').hide();
                 $('#recent-actions-module').hide();
                 $('.changelink').hide();
+                $('.actions .question').remove();
             {% endif %}
             $('input.autocomplete').each( function(){
                 var material = $(this).parents('tr').find('.field-__unicode__').text();
@@ -83,8 +84,6 @@
                     }
                 });
 
-            $('.actions .question').remove();
-
             $('#changelist-form button').click(function(){
 
                 if ($(this).parents('form').find('select').prop('value')=='aplicar_familia')
@@ -100,6 +99,7 @@
 
             $('td.field-familia').removeClass('nowrap');
             $('th.column-familia_selecionada').css('white-space','normal');
+            $('th.column-sugeridos_ja_tratados').css('white-space','normal');
 
             });
     </script>
