@@ -8,6 +8,15 @@ from django.utils.translation import ugettext_lazy as _
 ELIMINAR_SECOES_EXISTENTES = False
 
 def material_pre_save(sender, instance, **kwargs):
+
+    familia_selecionada = (instance.familia is not None)
+
+    if instance.familia_selecionada <> familia_selecionada:
+        instance.familia_selecionada = familia_selecionada
+
+    instance.familia_em_sugeridas = instance.sugestao_set.filter(
+        familia=instance.familia).exists()
+
     if instance.pk is not None:
         if instance.secao_SAP is not None:
             material_in_db = Material.objects.get(pk=instance.pk)
@@ -85,22 +94,21 @@ def update_familia_sugerida(sender, instance, **kwargs):
         material.familia_sugerida = sugestoes_new
         material.save()
 
+def sugestao_post_delete(sender, instance, **kwargs):
+    update_familia_sugerida(sender, instance, **kwargs)
+    if instance.material.familia == instance.familia:
+        instance.material.familia_em_sugeridas = False
+        instance.material.save()
+
 post_save.connect(update_familia_sugerida, 
     sender=Sugestao)
-post_delete.connect(update_familia_sugerida, 
+post_delete.connect(sugestao_post_delete, 
     sender=Sugestao)
 
 
 def update_material_post_save(sender, instance, created, **kwargs):
 
     save = False
-
-    familia_selecionada = (instance.familia is not None)
-
-    if instance.familia_selecionada <> familia_selecionada:
-        instance.familia_selecionada = familia_selecionada
-        save = True
-        instance.save()
 
     if created and instance.secao_SAP is not None:
         for secao in instance.secao_SAP.secoes_destino_possiveis.all():

@@ -297,6 +297,99 @@ class MaterialTestCase(TestCase):
         self.assertEqual(material.familia_sugerida,False)
         self.assertEqual(material.familia_selecionada,False)
 
+    def test_familia_em_sugeridas(self):
+
+        es = Elasticsearch()
+        es.indices.delete(index=ES_INDEX, ignore=[400, 404])
+
+        secao = Secao.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+        )
+
+        self.assertEqual(material.familia_em_sugeridas,False)
+
+        material.secoes_possiveis.add(secao)
+
+        material.refresh_from_db()
+        self.assertEqual(material.familia_em_sugeridas,False)
+
+        familia = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101001',
+            familia = 'GELADEIRAS'
+        )
+
+        familia2 = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101002',
+            familia = 'GELADEIRAS'
+        )
+
+        familia3 = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101003',
+            familia = 'GELADEIRAS'
+        )
+
+        sugestao = Sugestao.objects.create(
+            material = material,
+            familia = familia
+        )
+
+        sugestao2 = Sugestao.objects.create(
+            material = material,
+            familia = familia3
+        )
+
+        material.refresh_from_db()
+        self.assertEqual(material.familia_em_sugeridas,False)
+
+        material.familia = familia3
+        material.save()
+
+        material.refresh_from_db()
+        self.assertEqual(material.familia_em_sugeridas,True)
+
+        material.familia = familia2
+        material.save()
+
+        material.refresh_from_db()
+        self.assertEqual(material.familia_em_sugeridas,False)
+
+        material.familia = familia
+        material.save()
+
+        material.refresh_from_db()
+        self.assertEqual(material.familia_em_sugeridas,True)
+
+        sugestao.delete()
+
+        material.refresh_from_db()
+        self.assertEqual(material.familia_em_sugeridas,False)
+
+        
+
+
+
+
     def test_sugerir_respetando_secoes(self):
 
         es = Elasticsearch()
