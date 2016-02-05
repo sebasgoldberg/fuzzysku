@@ -20,7 +20,7 @@ class Command(BaseCommand):
         if len(options['cod_secao']) == 0:
             materiais = Material.objects.all()
         else:
-            materiais = Material.objects.filter(secao__cod_secao__in=options['cod_secao'])
+            materiais = Material.objects.filter(secoes_possiveis__cod_secao__in=options['cod_secao'])
 
         for material in materiais:
             try:
