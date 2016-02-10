@@ -54,7 +54,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display = ['id', '__unicode__', 'get_familias_sugeridas', 'familia', ]
     list_display_links = ['id']
     list_editable = ['familia', ]
-    search_fields = ['cod_material', 'material']
+    search_fields = ['cod_material', 'material', 'familia__cod_familia']
     list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis',]
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
