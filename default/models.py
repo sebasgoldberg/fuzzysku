@@ -128,6 +128,7 @@ class Material(models.Model):
     familia_sugerida = models.BooleanField(verbose_name=_(u'Familia Sugerida'), default=False)
     familia_selecionada = models.BooleanField(verbose_name=_(u'Familia Selecionada'), default=False)
     familia_em_sugeridas = models.BooleanField(verbose_name=_(u'Familia em Sugeridas'), default=False)
+    relevante = models.BooleanField(verbose_name=_(u'Relevante'), default=False)
 
     #secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True)
     #secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
@@ -227,6 +228,7 @@ class Material(models.Model):
             "familia_sugerida": self.familia_sugerida,
             "familia_selecionada": self.familia_selecionada,
             "familia_em_sugeridas": self.familia_em_sugeridas,
+            "relevante": self.relevante,
             }
         if self.secao_SAP is not None:
             body["cod_secao_SAP"] = self.secao_SAP.cod_secao

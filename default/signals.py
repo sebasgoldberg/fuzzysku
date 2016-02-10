@@ -17,6 +17,8 @@ def material_pre_save(sender, instance, **kwargs):
     instance.familia_em_sugeridas = instance.sugestao_set.filter(
         familia=instance.familia).exists()
 
+    instance.relevante = ( instance.secao_SAP is not None )
+
     if instance.pk is not None:
         if instance.secao_SAP is not None:
             material_in_db = Material.objects.get(pk=instance.pk)

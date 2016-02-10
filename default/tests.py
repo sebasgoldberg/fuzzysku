@@ -33,7 +33,36 @@ class SecaoTestCase(TestCase):
 
 class MaterialTestCase(TestCase):
 
-    def atualiza_secoes_possiveis_desde_secao_SAP(self):
+    def test_relevante(self):
+
+        secao_SAP = SecaoSAP.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO SAP'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+            secao_SAP = secao_SAP
+        )
+
+        material.refresh_from_db()
+        self.assertTrue(material.relevante)
+
+        material.secao_SAP = None
+        material.save()
+
+        material.refresh_from_db()
+        self.assertFalse(material.relevante)
+
+        material.secao_SAP = secao_SAP
+        material.save()
+
+        material.refresh_from_db()
+        self.assertTrue(material.relevante)
+
+
+    def test_atualiza_secoes_possiveis_desde_secao_SAP(self):
 
         secao = Secao.objects.create(
             cod_secao = '01',
@@ -78,19 +107,19 @@ class MaterialTestCase(TestCase):
         material.save()
 
         material.refresh_from_db()
-        self.assertEqual(material.secoes_possiveis.count(),1)
+        self.assertEqual(material.secoes_possiveis.count(),3)
         self.assertTrue(material.secoes_possiveis.filter(pk=secao3.pk).exists())
 
         material.secao_SAP = None
         material.save()
 
         material.refresh_from_db()
-        self.assertEqual(material.secoes_possiveis.count(),1)
+        self.assertEqual(material.secoes_possiveis.count(),3)
         self.assertTrue(material.secoes_possiveis.filter(pk=secao3.pk).exists())
 
         material.secoes_possiveis.add(secao)
 
-        self.assertEqual(material.secoes_possiveis.count(),2)
+        self.assertEqual(material.secoes_possiveis.count(),3)
         self.assertTrue(material.secoes_possiveis.filter(pk=secao.pk).exists())
         self.assertTrue(material.secoes_possiveis.filter(pk=secao3.pk).exists())
 
@@ -98,7 +127,7 @@ class MaterialTestCase(TestCase):
         material.save()
 
         material.refresh_from_db()
-        self.assertEqual(material.secoes_possiveis.count(),2)
+        self.assertEqual(material.secoes_possiveis.count(),3)
         self.assertTrue(material.secoes_possiveis.filter(pk=secao.pk).exists())
         self.assertTrue(material.secoes_possiveis.filter(pk=secao2.pk).exists())
 
@@ -384,10 +413,6 @@ class MaterialTestCase(TestCase):
 
         material.refresh_from_db()
         self.assertEqual(material.familia_em_sugeridas,False)
-
-        
-
-
 
 
     def test_sugerir_respetando_secoes(self):
