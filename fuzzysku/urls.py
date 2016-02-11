@@ -19,10 +19,12 @@ from django.conf.urls import url
 from django.contrib import admin
 import autocomplete_light
 from django.conf.urls import include
+from default import views
 
 admin.site.site_header = 'Sugestão de Familias por Material'
 
 urlpatterns = [
+    url(r'^$', views.dashboard, name='dashboard'),
     url(r'^default/', include('default.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^autocomplete/', include('autocomplete_light.urls')),

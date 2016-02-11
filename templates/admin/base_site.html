@@ -101,6 +101,10 @@
             $('th.column-familia_selecionada').css('white-space','normal');
             $('th.column-sugeridos_ja_tratados').css('white-space','normal');
 
+            var $dashboard = $('tbody tr.model-familia').first().clone();
+            $dashboard.find('th a').attr('href','/').attr('target','_blank').text('Dashboard');
+            $('tbody').append($dashboard);
+
             });
     </script>
 
