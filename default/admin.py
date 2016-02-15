@@ -47,7 +47,7 @@ class SecaoAdmin(admin.ModelAdmin):
 
 class SecaoSAPAdmin(SecaoAdmin):
     filter_horizontal = ['secoes_destino_possiveis']
-    list_display = ['id', 'cod_secao', 'secao',]
+    list_display = ['id', 'cod_secao', 'secao', 'get_secoes_destino_possiveis']
 
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
@@ -55,7 +55,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     list_editable = ['familia', ]
     search_fields = ['cod_material', 'material', 'familia__cod_familia']
-    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis',]
+    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis', 'secao_SAP']
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
     filter_horizontal = ['secoes_possiveis']

@@ -45,19 +45,21 @@ class Command(BaseCommand):
                             register[i] = register[i].strip()
 
                         try:
+
+                            username = register[USERNAME].lower()
                             
                             try:
-                                user = User.objects.get(username=register[USERNAME])
+                                user = User.objects.get(username=username)
                                 self.stdout.write(self.style.WARNING(ascii(u'Usuario "%s" ja existe.' % user)))
                             except User.DoesNotExist:
 
                                 user = User.objects.create_user(
-                                    username=register[USERNAME],
+                                    username=username,
                                     email=register[EMAIL],
                                     first_name=register[FIRST_NAME],
                                     last_name=register[LAST_NAME],
                                     is_staff=True,
-                                    password='familia123'
+                                    password=u'familia123'
                                     )
 
                                 user.groups=[grupo]
@@ -66,5 +68,6 @@ class Command(BaseCommand):
 
                         except IntegrityError:
 
+                            self.stdout.write(self.style.ERROR(u'Usuario "%s" não criado: %s' % (username, register)))
                             print(line,file=ferr)
 

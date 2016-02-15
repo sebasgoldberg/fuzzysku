@@ -68,6 +68,13 @@ class SecaoSAP(BaseSecao):
         verbose_name_plural = _(u"Seções SAP")
         app_label = 'default'
 
+    def get_secoes_destino_possiveis(self):
+        if self.secoes_destino_possiveis.exists():
+            return u"<ul><li>%s</li></ul>" % u'</li><li>'.join([u'%s' % x for x in self.secoes_destino_possiveis.all()])
+        return None
+    get_secoes_destino_possiveis.allow_tags = True
+    get_secoes_destino_possiveis.short_description = _(u'Seções Possiveis')
+    
 
 class Familia(models.Model):
     
@@ -133,8 +140,8 @@ class Material(models.Model):
     #secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True)
     #secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
     secoes_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Possiveis'))
-    familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True)
-    secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True)
+    familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True, on_delete=models.SET_NULL)
+    secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True, on_delete=models.SET_NULL)
 
     #familias_sugeridas = models.ManyToManyField(Familia, verbose_name=_(u'Familias Sugeridas'), related_name='familias_sugeridas_set')
 

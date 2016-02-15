@@ -21,12 +21,10 @@ def material_pre_save(sender, instance, **kwargs):
 
     if instance.pk is not None:
         if instance.secao_SAP is not None:
-            material_in_db = Material.objects.get(pk=instance.pk)
-            if material_in_db.secao_SAP <> instance.secao_SAP:
-                if ELIMINAR_SECOES_EXISTENTES:
-                    instance.secao_SAP.secoes_destino_possiveis.delete()
-                for secao in instance.secao_SAP.secoes_destino_possiveis.all():
-                    instance.secoes_possiveis.add(secao)
+            if ELIMINAR_SECOES_EXISTENTES:
+                instance.secao_SAP.secoes_destino_possiveis.delete()
+            for secao in instance.secao_SAP.secoes_destino_possiveis.all():
+                instance.secoes_possiveis.add(secao)
 
     if instance.familia is None:
         return

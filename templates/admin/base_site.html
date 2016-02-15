@@ -48,6 +48,27 @@
                 input.val(value);
                 input.yourlabsAutocomplete().refresh();
                 });
+
+            function mostrarSemGravar(targetUrl){
+
+                $( "#dialog-sem-gravar" ).dialog({
+                    resizable: false,
+                    height:200,
+                    width:600,
+                    modal: true,
+                    buttons: {
+                        "Melhor vou gravar as modificações": function() {
+                            $( this ).dialog( "close" );
+                            },
+                        "Quero mudar de pagina mesmo": function() {
+                            window.location.href = targetUrl;
+                            },
+                        }
+                    });
+
+
+                }
+
             $('.paginator a').click( function(event){
 
                 if ($('.action-checkbox .action-select:checked').length > 0 ){
@@ -55,20 +76,7 @@
 
                     var targetUrl = $(this).attr("href");
 
-                    $( "#dialog-sem-gravar" ).dialog({
-                        resizable: false,
-                        height:200,
-                        width:600,
-                        modal: true,
-                        buttons: {
-                            "Melhor vou gravar as modificações": function() {
-                                $( this ).dialog( "close" );
-                                },
-                            "Quero mudar de pagina mesmo": function() {
-                                window.location.href = targetUrl;
-                                },
-                            }
-                        });
+                    mostrarSemGravar(targetUrl);
 
                     }
 

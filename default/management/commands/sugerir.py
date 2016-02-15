@@ -23,24 +23,19 @@ class Command(BaseCommand):
             materiais = Material.objects.filter(secoes_possiveis__cod_secao__in=options['cod_secao'])
 
         for material in materiais:
-            try:
-                sugestoes = material.sugerir()
-                material.salvar_sugestoes(sugestoes)
+            sugestoes = material.sugerir()
+            material.salvar_sugestoes(sugestoes)
 
-                self.stdout.write(self.style.SUCCESS(u'Sugestão realizada para material "%s" feita com sucesso.' % material))
+            self.stdout.write(self.style.SUCCESS(u'Sugestão realizada para material "%s" feita com sucesso.' % material))
 
-                for (score, familia) in sugestoes:
-                    self.stdout.write(self.style.SUCCESS(u'Sugestão [%s]: "%s".' % (score, familia) ))
-                
-                if len(sugestoes) > 0:
-                    quan_sugeridos = quan_sugeridos + 1
-                else:
-                    self.stdout.write(self.style.WARNING(u'Sem sugestões para material "%s".' % material))
-                    quan_nao_sugeridos = quan_nao_sugeridos + 1
-
-            except SelecaoRealizadaException:
-                self.stdout.write(self.style.ERROR(u'Material "%s" já tem seleção realizada.' % material))
-                quan_selecao_realizada = quan_selecao_realizada + 1
+            for (score, familia) in sugestoes:
+                self.stdout.write(self.style.SUCCESS(u'Sugestão [%s]: "%s".' % (score, familia) ))
+            
+            if len(sugestoes) > 0:
+                quan_sugeridos = quan_sugeridos + 1
+            else:
+                self.stdout.write(self.style.WARNING(u'Sem sugestões para material "%s".' % material))
+                quan_nao_sugeridos = quan_nao_sugeridos + 1
 
         self.stdout.write(self.style.SUCCESS(u'Resultados: [Sugeridos: %s] [Sem sugestões: %s] [Já selecionados: %s]' %
             (quan_sugeridos, quan_nao_sugeridos, quan_selecao_realizada) ))
