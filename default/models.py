@@ -34,6 +34,13 @@ class CodigoSubGrupoNaoCoincide(ValidationError):
 class FamiliaJaSelecionada(ValidationError):
     pass
 
+class Setor(models.Model):
+
+    setor = models.CharField(max_length=100, verbose_name=_(u'Setor'), unique=True)
+
+    def __unicode__(self):
+        return u'%s' % self.setor
+
 class BaseSecao(models.Model):
     
     cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'), unique=True)
@@ -57,7 +64,8 @@ class BaseSecao(models.Model):
 
 
 class Secao(BaseSecao):
-    pass
+
+    setor = models.ForeignKey(Setor, verbose_name=_(u'Setor'), null=True, blank=True)
 
 
 class SecaoSAP(BaseSecao):
@@ -217,13 +225,19 @@ class Material(models.Model):
 
     def index(self):
         es = Elasticsearch()
+
+        setor = [ ]
         if self.familia_selecionada:
+            if self.familia.secao.setor is not None:
+                setor = [ self.familia.secao.setor.setor ]
             cod_secao = [ self.familia.secao.cod_secao ]
             secao = [ self.familia.secao.secao ]
         else:
             cod_secao = [ ]
             secao = [ ]
             for x in self.secoes_possiveis.all():
+                if x.setor is not None:
+                    setor.append(x.setor.setor)
                 cod_secao.append(x.cod_secao)
                 secao.append(x.secao)
 
@@ -232,6 +246,7 @@ class Material(models.Model):
             "material": self.material,
             "cod_secao": cod_secao,
             "secao": secao,
+            "setor": setor,
             "familia_sugerida": self.familia_sugerida,
             "familia_selecionada": self.familia_selecionada,
             "familia_em_sugeridas": self.familia_em_sugeridas,
