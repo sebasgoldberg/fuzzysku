@@ -27,3 +27,4 @@ pip-selfcheck.json
 *.err.in
 data/*
 vendor
+familiasskus.*.json

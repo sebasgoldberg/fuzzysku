@@ -223,8 +223,7 @@ class Material(models.Model):
         for (score, familia) in familias:
             self.sugestao_set.create(score=score, familia=familia)
 
-    def index(self):
-        es = Elasticsearch()
+    def index_dict(self):
 
         setor = [ ]
         if self.familia_selecionada:
@@ -258,7 +257,18 @@ class Material(models.Model):
         if self.familia is not None:
             body["cod_familia"] = self.familia.cod_familia
             body["familia"] = self.familia.familia
-        es.index(index=ES_FAMILIAS_INDEX, doc_type=ES_FAMILIAS_DOC_TYPE, id=self.cod_material, body=body)
+        return body
+ 
+    def index_key(self):
+        return self.cod_material
+
+    def index(self):
+        es = Elasticsearch()
+        es.index(
+            index=ES_FAMILIAS_INDEX,
+            doc_type=ES_FAMILIAS_DOC_TYPE,
+            id=self.index_key,
+            body=self.index_dict())
 
     def es_delete(self):
         es = Elasticsearch()
