@@ -145,13 +145,11 @@ class Material(models.Model):
     familia_em_sugeridas = models.BooleanField(verbose_name=_(u'Familia em Sugeridas'), default=False)
     relevante = models.BooleanField(verbose_name=_(u'Relevante'), default=False)
 
-    #secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True)
-    #secoes_possiveis = models.CharField(max_length=100, verbose_name=_(u'Seções Possiveis'), default='')
     secoes_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Possiveis'))
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True, on_delete=models.SET_NULL)
     secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True, on_delete=models.SET_NULL)
 
-    #familias_sugeridas = models.ManyToManyField(Familia, verbose_name=_(u'Familias Sugeridas'), related_name='familias_sugeridas_set')
+    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True, blank=True)
 
     class Meta:
         ordering = ['material']
@@ -178,6 +176,12 @@ class Material(models.Model):
     def sugerir(self):
 
         es = Elasticsearch()
+
+        if self.secao is not None:
+            cod_secao = [self.secao.cod_secao]
+        else:
+            cod_secao = [x.cod_secao for x in self.secoes_possiveis.all()]
+
         body={
             'query': {
                 'filtered':{
@@ -191,7 +195,7 @@ class Material(models.Model):
                     'filter': {
                         'bool':{
                             'must':{
-                                'terms': { 'cod_secao': [x.cod_secao for x in self.secoes_possiveis.all()] , },
+                                'terms': { 'cod_secao': cod_secao, },
                                 }
                             }
                         }
@@ -232,13 +236,17 @@ class Material(models.Model):
             cod_secao = [ self.familia.secao.cod_secao ]
             secao = [ self.familia.secao.secao ]
         else:
-            cod_secao = [ ]
-            secao = [ ]
-            for x in self.secoes_possiveis.all():
-                if x.setor is not None:
-                    setor.append(x.setor.setor)
-                cod_secao.append(x.cod_secao)
-                secao.append(x.secao)
+            if self.secao is not None:
+                cod_secao = [ self.secao.cod_secao ]
+                secao = [ self.secao.secao ]
+            else:
+                cod_secao = [ ]
+                secao = [ ]
+                for x in self.secoes_possiveis.all():
+                    if x.setor is not None:
+                        setor.append(x.setor.setor)
+                    cod_secao.append(x.cod_secao)
+                    secao.append(x.secao)
 
         body = {
             "cod_material": self.cod_material,

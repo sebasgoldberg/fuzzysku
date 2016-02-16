@@ -67,9 +67,9 @@ class SecaoSAPAdmin(BaseSecaoAdmin):
 
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ['id', '__unicode__', 'get_familias_sugeridas', 'familia', ]
+    list_display = ['id', '__unicode__', 'get_familias_sugeridas', 'familia', 'secao', ]
     list_display_links = ['id']
-    list_editable = ['familia', ]
+    list_editable = ['familia', 'secao' ]
     search_fields = ['cod_material', 'material', 'familia__cod_familia']
     list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis__setor', 'secoes_possiveis', 'secao_SAP']
     list_per_page = 40

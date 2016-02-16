@@ -33,6 +33,77 @@ class SecaoTestCase(TestCase):
 
 class MaterialTestCase(TestCase):
 
+    def test_campo_secao(self):
+       
+        secao = Secao.objects.create(
+            cod_secao = '01',
+            secao = 'ELECTRO'
+        )
+
+        secao2 = Secao.objects.create(
+            cod_secao = '02',
+            secao = 'ELECTRO 2'
+        )
+
+        material = Material.objects.create(
+            cod_material = '0001',
+            material = 'GELADEIRA',
+        )
+
+        material.secoes_possiveis.add(secao2)
+
+        familia = Familia.objects.create(
+            secao = secao2,
+            cod_grupo = '0201',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '020101',
+            subgrupo = 'FRIO',
+            cod_familia = '020101001',
+            familia = 'GELADEIRAS'
+        )
+
+        material.familia = familia
+        material.save()
+
+        material.refresh_from_db()
+        material.secao = secao
+
+        with self.assertRaises(SecoesNaoCoincidem):
+            material.save()
+ 
+        material.refresh_from_db()
+        material.familia = None
+        material.secao = secao
+        material.save()
+
+        material.refresh_from_db()
+        material.familia = familia
+
+        with self.assertRaises(SecoesNaoCoincidem):
+            material.save()
+
+        familia2 = Familia.objects.create(
+            secao = secao,
+            cod_grupo = '0101',
+            grupo = 'ELECTRO',
+            cod_subgrupo = '010101',
+            subgrupo = 'FRIO',
+            cod_familia = '010101001',
+            familia = 'GELADEIRAS'
+        )
+
+        material.refresh_from_db()
+        material.familia = familia2
+        material.save()
+
+        material.refresh_from_db()
+        material.secao = None
+        material.familia = familia
+        material.save()
+
+
+ 
+
     def test_relevante(self):
 
         secao_SAP = SecaoSAP.objects.create(
@@ -480,6 +551,15 @@ class MaterialTestCase(TestCase):
         self.assertEqual(len(sugerencias), 2)
         self.assertIn(familia, [ x[1] for x in sugerencias ])
         self.assertIn(familia2, [ x[1] for x in sugerencias ])
+
+        material.secao = secao3
+        
+        es.indices.refresh(index=ES_INDEX)
+
+        sugerencias = material.sugerir()
+
+        self.assertEqual(len(sugerencias), 1)
+        self.assertIn(familia3, [ x[1] for x in sugerencias ])
 
 
 

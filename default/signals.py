@@ -28,7 +28,17 @@ def material_pre_save(sender, instance, **kwargs):
 
     if instance.familia is None:
         return
-    if not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
+
+    if instance.secao is not None:
+        if instance.secao.id <> instance.familia.secao.id:
+            raise SecoesNaoCoincidem(_(u'A familia %s tem seção %s, mas o material %s pertece a seções %s') % (
+                instance.familia,
+                instance.familia.secao,
+                instance,
+                [instance.secao],
+                ))
+
+    elif not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
         raise SecoesNaoCoincidem(_(u'A familia %s tem seção %s, mas o material %s pertece a seções %s') % (
             instance.familia,
             instance.familia.secao,
@@ -41,6 +51,8 @@ pre_save.connect(material_pre_save,
 
 
 def secoes_possiveis_changed(sender, instance, action, **kwargs):
+    if instance.secao is not None:
+        return
     if not ( ( action == 'post_remove' ) or ( action == 'pre_remove' ) ):
         return
     if instance.familia is None:

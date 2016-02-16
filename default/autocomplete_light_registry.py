@@ -9,7 +9,10 @@ class FamiliaAutocomplete(al.AutocompleteModelBase):
 
     def choices_for_request(self):
         material = Material.objects.get(cod_material = self.request.GET['cod_material'])
-        self.choices = self.choices.filter(secao__in=material.secoes_possiveis.all())
+        if material.secao is not None:
+            self.choices = self.choices.filter(secao=material.secao)
+        else:
+            self.choices = self.choices.filter(secao__in=material.secoes_possiveis.all())
         return super(FamiliaAutocomplete, self).choices_for_request()
 
 al.register(FamiliaAutocomplete)
