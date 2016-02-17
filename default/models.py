@@ -149,7 +149,7 @@ class Material(models.Model):
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True, on_delete=models.SET_NULL)
     secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True, on_delete=models.SET_NULL)
 
-    secao = models.ForeignKey(Secao, verbose_name=_(u'Seção'), related_name='rel_secao', null=True, blank=True)
+    secao = models.ForeignKey(Secao, verbose_name=_(u'Nova Seção'), related_name='rel_secao', null=True, blank=True)
 
     class Meta:
         ordering = ['material']

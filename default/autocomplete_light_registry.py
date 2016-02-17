@@ -1,7 +1,7 @@
 #encoding=utf8
 
 import autocomplete_light.shortcuts as al
-from models import Familia, Material
+from models import *
 
 class FamiliaAutocomplete(al.AutocompleteModelBase):
     search_fields = ['secao__secao', 'grupo', 'subgrupo', 'familia', 'cod_familia']
@@ -15,4 +15,11 @@ class FamiliaAutocomplete(al.AutocompleteModelBase):
             self.choices = self.choices.filter(secao__in=material.secoes_possiveis.all())
         return super(FamiliaAutocomplete, self).choices_for_request()
 
+
+class SecaoAutocomplete(al.AutocompleteModelBase):
+    search_fields = ['secao__secao']
+    model = Secao
+
+
 al.register(FamiliaAutocomplete)
+#al.register(SecaoAutocomplete)

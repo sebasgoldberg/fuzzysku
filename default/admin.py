@@ -66,15 +66,40 @@ class SecaoSAPAdmin(BaseSecaoAdmin):
 
 
 class MaterialAdmin(admin.ModelAdmin):
-    actions = None
+
+    def sugerir(self, request, queryset):
+
+        quan_sugeridos = 0
+        quan_nao_sugeridos = 0
+        quan_selecao_realizada = 0
+
+        for material in queryset:
+
+            sugestoes = material.sugerir()
+            material.salvar_sugestoes(sugestoes)
+            
+            if len(sugestoes) > 0:
+                quan_sugeridos = quan_sugeridos + 1
+            else:
+                quan_nao_sugeridos = quan_nao_sugeridos + 1
+
+        self.message_user(request, _(u'Materiais que tiverão sugestões: %s') %
+            quan_sugeridos, level=messages.SUCCESS)
+        self.message_user(request, _(u'Materiais que não tiverão sugestões: %s') %
+            quan_nao_sugeridos, level=messages.WARNING)
+
+    sugerir.short_description = _(u'Sugerir Familias')
+
+    actions = ['sugerir', ]
+ 
     list_display = ['id', '__unicode__', 'get_familias_sugeridas', 'familia', 'secao', ]
     list_display_links = ['id']
     list_editable = ['familia', 'secao' ]
     search_fields = ['cod_material', 'material', 'familia__cod_familia']
-    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis__setor', 'secoes_possiveis', 'secao_SAP']
+    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis__setor', 'secoes_possiveis', 'secao', 'secao_SAP']
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
-    filter_horizontal = ['secoes_possiveis']
+    filter_horizontal = ['secoes_possiveis', ]
 
     def get_changelist_form(self, request, **kwargs):
         defaults = {
