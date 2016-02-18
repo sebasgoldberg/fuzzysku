@@ -1,4 +1,4 @@
-/uploads/*
+uploads/*
 tags
 *.swp
 *.swo
@@ -7,7 +7,7 @@ ambiente.py
 .coverage
 django.mo
 *.log
-/static/*
+static/*
 db.sqlite3
 *.lprof
 .project
