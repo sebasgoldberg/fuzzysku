@@ -96,7 +96,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     list_editable = ['familia', 'secao' ]
     search_fields = ['cod_material', 'material', 'familia__cod_familia']
-    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis__setor', 'secoes_possiveis', 'secao', 'secao_SAP']
+    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis__setor', 'secao__setor', 'secoes_possiveis', 'secao',]
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
     filter_horizontal = ['secoes_possiveis', ]
