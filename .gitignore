@@ -28,3 +28,5 @@ pip-selfcheck.json
 data/*
 vendor
 familiasskus.*.json
+*.sql
+backup/*

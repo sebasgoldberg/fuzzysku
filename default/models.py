@@ -275,7 +275,7 @@ class Material(models.Model):
         es.index(
             index=ES_FAMILIAS_INDEX,
             doc_type=ES_FAMILIAS_DOC_TYPE,
-            id=self.index_key,
+            id=self.index_key(),
             body=self.index_dict())
 
     def es_delete(self):
