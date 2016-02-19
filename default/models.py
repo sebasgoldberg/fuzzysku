@@ -101,7 +101,7 @@ class Familia(models.Model):
         app_label = 'default'
 
     def __unicode__(self):
-        return u'%s /%s/%s/%s/%s' % (self.cod_familia, self.secao.secao, self.familia, self.grupo, self.subgrupo)
+        return u'%s /%s/%s/%s/%s' % (self.cod_familia, self.secao.secao, self.grupo, self.subgrupo, self.familia)
 
     def index(self):
         es = Elasticsearch()
