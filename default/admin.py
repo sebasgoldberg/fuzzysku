@@ -36,6 +36,25 @@ class SugeridosJaTratadosListFilter(admin.SimpleListFilter):
             """)]
         return queryset.filter(id__in=familias_ids)
 
+from django.db.models import Q
+
+class SecaoListFilter(admin.SimpleListFilter):
+    title = _(u'Secao')
+    parameter_name = 'secao_any'
+
+    def lookups(self, request, model_admin):
+        return ( (x.id, u'%s' % x ) for x in Secao.objects.all() )
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        secao_id = self.value()
+        return queryset.filter(
+            Q(familia_selecionada=True, familia__secao__id=secao_id) |
+            Q(familia_selecionada=False, secao__isnull=True, secoes_possiveis=secao_id) | 
+            Q(secao=secao_id))
+
+
 class SetorAdmin(admin.ModelAdmin):
     
     list_display_links = ['id']
@@ -96,7 +115,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     list_editable = ['familia', 'secao' ]
     search_fields = ['cod_material', 'material', 'familia__cod_familia']
-    list_filter = ['familia_selecionada', 'familia_sugerida', 'secoes_possiveis__setor', 'secao__setor', 'secoes_possiveis', 'secao',]
+    list_filter = ['familia_selecionada', 'familia_sugerida', SecaoListFilter,]
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
     filter_horizontal = ['secoes_possiveis', ]
@@ -143,7 +162,7 @@ class SugestaoAdmin(admin.ModelAdmin):
             self.message_user(request, _(u"%s materiais já tinham selecionada uma familia.") % quan_familia_ja_selecionada, level=messages.ERROR)
     aplicar_familia.short_description = _(u'Aplicar familia')
 
-    actions = ['aplicar_familia', ]
+    actions = ['aplicar_familia', 'delete_selected', ]
     #list_display = ['id', 'familia_selecionada', 'familia_aplicada', 'material', 'familia']
     list_display = ['id', 'familia_selecionada', 'material', 'familia']
     list_display_links = ['id']
