@@ -237,6 +237,7 @@ class Material(models.Model):
             secao = [ self.familia.secao.secao ]
         else:
             if self.secao is not None:
+                setor = [ self.secao.setor.setor ]
                 cod_secao = [ self.secao.cod_secao ]
                 secao = [ self.secao.secao ]
             else:

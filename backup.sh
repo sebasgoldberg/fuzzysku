@@ -1,2 +1,5 @@
 #!/bin/bash
-pg_dump -U fuzzysku fuzzysku -f "backup/$(date +%Y-%m-%d).sql"
+FILENAME="backup/$(date +%Y-%m-%d).sql"
+pg_dump -U fuzzysku fuzzysku -f "$FILENAME"
+tar -zcvf "$FILENAME.tar.gz" "$FILENAME"
+rm "$FILENAME"
