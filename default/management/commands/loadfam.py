@@ -37,11 +37,16 @@ class Command(BaseCommand):
                             register[i] = register[i].strip()
 
                         try:
+
+                            secao = Secao.objects.get_or_create(
+                                cod_secao=register[COD_SECAO].zfill(2),
+                                secao=register[SECAO]
+                                )[0]
+
+                            secao.refresh_from_db()
+
                             familia, creado = Familia.objects.get_or_create(
-                                secao = Secao.objects.get_or_create(
-                                    cod_secao=register[COD_SECAO].zfill(2),
-                                    secao=register[SECAO]
-                                    )[0],
+                                secao = secao,
                                 cod_grupo=register[COD_GRUPO].zfill(4),
                                 grupo=register[GRUPO],
                                 cod_subgrupo=register[COD_SUBGRUPO].zfill(6),

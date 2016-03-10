@@ -24,16 +24,25 @@ class Command(BaseCommand):
     help = 'Realiza um save para cada material e paraleliza por seção.'
 
     def add_arguments(self, parser):
-        pass
-        #parser.add_argument('cod_secao', nargs='*')
+        parser.add_argument('cod_secao', nargs='*')
 
     def handle(self, *args, **options):
 
         command['command'] = self
 
-        pool = Pool(processes=32)
-        pool.map(save_material_secao_SAP, [ s for s in SecaoSAP.objects.all() ] )
+        secoes_especificas = False
 
-        for m in Material.objects.filter(secao_SAP__isnull=True):
-            save_material(m)
+        if len(options['cod_secao']) > 0:
+            secoes = SecaoSAP.objects.filter(cod_secao__in=options['cod_secao'])
+            secoes_especificas = True
+        else:
+            secoes = SecaoSAP.objects.all()
+
+
+        pool = Pool(processes=32)
+        pool.map(save_material_secao_SAP, [ s for s in secoes ] )
+
+        if not secoes_especificas:
+            for m in Material.objects.filter(secao_SAP__isnull=True):
+                save_material(m)
 
