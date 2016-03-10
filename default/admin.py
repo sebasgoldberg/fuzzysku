@@ -52,7 +52,7 @@ class SecaoListFilter(admin.SimpleListFilter):
         return queryset.filter(
             Q(familia_selecionada=True, familia__secao__id=secao_id) |
             Q(familia_selecionada=False, secao__isnull=True, secoes_possiveis=secao_id) | 
-            Q(secao=secao_id))
+            Q(secao=secao_id)).distinct()
 
 
 class SetorAdmin(admin.ModelAdmin):
