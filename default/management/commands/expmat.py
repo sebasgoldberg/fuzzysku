@@ -27,9 +27,13 @@ class Command(BaseCommand):
             ))
 
         for m in materiais:
+            if m.familia is None:
+                cod_familia = u''
+            else:
+                cod_familia = m.familia.cod_familia
             print(u"%s\t%s" % (
                 m.cod_material,
-                m.familia.cod_familia,
+                cod_familia,
                 ))
 
 
