@@ -3,6 +3,9 @@ from django.core.management.base import BaseCommand, CommandError
 from default.models import *
 from multiprocessing import Pool
 from els.utils import ElasticFilesGenerator
+import sys
+import codecs
+sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 class Command(BaseCommand):
     help = 'Gera um arquivo de familias separado por tabuladores.'
@@ -17,7 +20,7 @@ class Command(BaseCommand):
         else:
             familias = Familia.objects.filter(secao__cod_secao__in=options['cod_secao'])
 
-        print((u"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+        print(u"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
             u"Setor",
             u"Cod. Seção",
             u"Seção",
@@ -27,9 +30,9 @@ class Command(BaseCommand):
             u"Subgrupo",
             u"Cod. Familia",
             u"Familia",
-            )).encode('utf8'))
+            ))
         for f in familias:
-            print((u"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+            print(u"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
                 f.secao.setor.setor,
                 f.secao.cod_secao,
                 f.secao.secao,
@@ -39,5 +42,5 @@ class Command(BaseCommand):
                 f.subgrupo,
                 f.cod_familia,
                 f.familia,
-                )).encode('utf8'))
+                ))
 
