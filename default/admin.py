@@ -55,6 +55,23 @@ class SecaoListFilter(admin.SimpleListFilter):
             Q(secao=secao_id)).distinct()
 
 
+class SetorListFilter(admin.SimpleListFilter):
+    title = _(u'Setor')
+    parameter_name = 'setor_any'
+
+    def lookups(self, request, model_admin):
+        return ( (x.id, u'%s' % x ) for x in Setor.objects.all() )
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        setor_id = self.value()
+        return queryset.filter(
+            Q(familia_selecionada=True, familia__secao__setor__id=setor_id) |
+            Q(familia_selecionada=False, secao__isnull=True, secoes_possiveis__setor__id=setor_id) | 
+            Q(secao__setor__id=setor_id)).distinct()
+
+
 class SetorAdmin(admin.ModelAdmin):
     
     list_display_links = ['id']
@@ -115,7 +132,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display_links = ['id']
     list_editable = ['familia', 'secao' ]
     search_fields = ['cod_material', 'material', 'familia__cod_familia']
-    list_filter = ['familia_selecionada', 'familia_sugerida', SecaoListFilter,]
+    list_filter = ['familia_selecionada', 'familia_sugerida', SetorListFilter, SecaoListFilter,]
     list_per_page = 40
     form = autocomplete_light.modelform_factory(Material, fields='__all__')
     filter_horizontal = ['secoes_possiveis', ]

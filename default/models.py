@@ -117,6 +117,14 @@ class Familia(models.Model):
             }
         es.index(index=ES_INDEX, doc_type=ES_DOC_TYPE, id=self.cod_familia, body=body)
 
+    def es_delete(self):
+        es = Elasticsearch()
+        try:
+            es.delete(index=ES_INDEX, doc_type=ES_DOC_TYPE, id=self.cod_familia)
+        # @todo NotFoundError
+        except:
+            pass
+
     def tratar_sugeridos(self):
         if self.sugestao_set.exists():
             if self.sugestao_set.filter(material__familia_selecionada=False).exists():
@@ -237,7 +245,8 @@ class Material(models.Model):
             secao = [ self.familia.secao.secao ]
         else:
             if self.secao is not None:
-                setor = [ self.secao.setor.setor ]
+                if self.secao.setor is not None:
+                    setor = [ self.secao.setor.setor ]
                 cod_secao = [ self.secao.cod_secao ]
                 secao = [ self.secao.secao ]
             else:
