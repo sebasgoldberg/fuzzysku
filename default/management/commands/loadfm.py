@@ -106,7 +106,7 @@ class Command(BaseCommand):
                                     self.stdout.write(self.style.SUCCESS(u'Familia "%s" criada com sucesso.' % familia))
 
                             except IntegrityError:
-                                familia = Familia.objects.get(cod_material=register[COD_FAMILIA])
+                                familia = Familia.objects.get(cod_familia=register[COD_FAMILIA])
                                 self.stdout.write(self.style.ERROR(u'ERRO: Familia %s já existe e difiere do registro fornecido: "%s".' % (familia, register)))
                                 print(line,file=ferr)
                                 continue
