@@ -1,5 +1,6 @@
 #encoding=utf8
 from django.test import TestCase
+from django.db.utils import IntegrityError
 
 from models import *
 
@@ -661,6 +662,80 @@ class SugestaoTestCase(TestCase):
 
 
 class FamiliaTestCase(TestCase):
+
+    def test_completar_codigos(self):
+
+        secao = Secao.objects.create(
+            cod_secao = '08',
+            secao = 'ALMACEN'
+        )
+
+        familia = Familia.objects.create(
+            secao = secao,
+            grupo = 'GRUPO',
+            subgrupo = 'SUBGRUPO',
+            familia = 'FAMILIA'
+        )
+
+        self.assertEqual(familia.cod_grupo, '0899')
+        self.assertEqual(familia.cod_subgrupo, '089901')
+        self.assertEqual(familia.cod_familia, '089901001')
+
+        familia = Familia.objects.create(
+            secao = secao,
+            grupo = 'GRUPO 2',
+            subgrupo = 'SUBGRUPO',
+            familia = 'FAMILIA'
+        )
+
+        self.assertEqual(familia.cod_grupo, '0898')
+        self.assertEqual(familia.cod_subgrupo, '089801')
+        self.assertEqual(familia.cod_familia, '089801001')
+
+        familia = Familia.objects.create(
+            secao = secao,
+            grupo = 'GRUPO 2',
+            subgrupo = 'SUBGRUPO 2',
+            familia = 'FAMILIA'
+        )
+
+        self.assertEqual(familia.cod_grupo, '0898')
+        self.assertEqual(familia.cod_subgrupo, '089802')
+        self.assertEqual(familia.cod_familia, '089802001')
+
+        familia = Familia.objects.create(
+            secao = secao,
+            grupo = 'GRUPO 2',
+            subgrupo = 'SUBGRUPO 2',
+            familia = 'FAMILIA 2'
+        )
+
+        self.assertEqual(familia.cod_grupo, '0898')
+        self.assertEqual(familia.cod_subgrupo, '089802')
+        self.assertEqual(familia.cod_familia, '089802002')
+
+        familia = Familia.objects.create(
+            secao = secao,
+            grupo = 'GRUPO 2',
+            subgrupo = 'SUBGRUPO 2',
+            familia = 'FAMILIA 3'
+        )
+
+        self.assertEqual(familia.cod_grupo, '0898')
+        self.assertEqual(familia.cod_subgrupo, '089802')
+        self.assertEqual(familia.cod_familia, '089802003')
+
+
+
+
+        with self.assertRaises(IntegrityError):
+            Familia.objects.create(
+                secao = secao,
+                grupo = 'GRUPO',
+                subgrupo = 'SUBGRUPO',
+                familia = 'FAMILIA'
+            )
+
 
     def test_validacoes(self):
 

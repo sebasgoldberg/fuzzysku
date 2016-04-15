@@ -70,6 +70,8 @@ m2m_changed.connect(secoes_possiveis_changed,
 
 
 def validar_familia(sender, instance, **kwargs):
+    
+    instance.completar_codigos()
 
     instance.cod_grupo = instance.cod_grupo.zfill(4)
     instance.cod_subgrupo = instance.cod_subgrupo.zfill(6)

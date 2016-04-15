@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models import Min, Max
 
 from elasticsearch import Elasticsearch
 
@@ -102,6 +103,46 @@ class Familia(models.Model):
 
     def __unicode__(self):
         return u'%s /%s/%s/%s/%s' % (self.cod_familia, self.secao.secao, self.grupo, self.subgrupo, self.familia)
+
+    def completar_codigos(self):
+
+        if self.cod_grupo == '' :
+            familias = self.secao.familia_set.filter(grupo=self.grupo)
+            if familias.exists():
+                self.cod_grupo = familias.first().cod_grupo
+            elif self.secao.familia_set.exists():
+                min_cod_grupo = self.secao.familia_set.aggregate(Min('cod_grupo'))['cod_grupo__min']
+                self.cod_grupo = str(int(min_cod_grupo) - 1)
+            else:
+                self.cod_grupo = self.secao.cod_secao + '99'
+                if self.cod_subgrupo == '':
+                    self.cod_subgrupo = self.cod_grupo + '01'
+                if self.cod_familia == '':
+                    self.cod_familia = self.cod_subgrupo + '001'
+                return
+
+        if self.cod_subgrupo == '':
+            familias = self.secao.familia_set.filter(cod_grupo=self.cod_grupo, subgrupo=self.subgrupo)
+            if familias.exists():
+                self.cod_subgrupo = familias.first().cod_subgrupo
+            elif self.secao.familia_set.filter(cod_grupo=self.cod_grupo).exists():
+                max_cod_subgrupo = self.secao.familia_set.filter(cod_grupo=self.cod_grupo).aggregate(Max('cod_subgrupo'))['cod_subgrupo__max']
+                self.cod_subgrupo = str(int(max_cod_subgrupo) + 1)
+            else:
+                self.cod_subgrupo = self.cod_grupo + '01'
+                if self.cod_familia == '':
+                    self.cod_familia = self.cod_subgrupo + '001'
+                return
+
+        if self.cod_familia == '':
+            familias = self.secao.familia_set.filter(cod_grupo=self.cod_grupo, cod_subgrupo=self.cod_subgrupo, familia=self.familia)
+            if familias.exists():
+                self.cod_familia = familias.first().cod_familia
+            elif self.secao.familia_set.filter(cod_grupo=self.cod_grupo, cod_subgrupo=self.cod_subgrupo).exists():
+                max_cod_familia = self.secao.familia_set.filter(cod_grupo=self.cod_grupo, cod_subgrupo=self.cod_subgrupo).aggregate(Max('cod_familia'))['cod_familia__max']
+                self.cod_familia = str(int(max_cod_familia) + 1)
+            else:
+                self.cod_familia = self.cod_subgrupo + '001'
 
     def index(self):
         es = Elasticsearch()
