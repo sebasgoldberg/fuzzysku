@@ -45,13 +45,24 @@ class Command(BaseCommand):
 
                             secao.refresh_from_db()
 
+                            cod_grupo=register[COD_GRUPO]
+                            if cod_grupo <> '': 
+                                cod_grupo.zfill(4)
+                            cod_subgrupo=register[COD_SUBGRUPO]
+                            if cod_subgrupo <> '': 
+                                cod_subgrupo.zfill(6)
+                            cod_familia=register[COD_FAMILIA]
+                            if cod_familia <> '': 
+                                cod_familia.zfill(9)
+
+
                             familia, creado = Familia.objects.get_or_create(
                                 secao = secao,
-                                cod_grupo=register[COD_GRUPO].zfill(4),
+                                cod_grupo=cod_grupo,
                                 grupo=register[GRUPO],
-                                cod_subgrupo=register[COD_SUBGRUPO].zfill(6),
+                                cod_subgrupo=cod_subgrupo,
                                 subgrupo=register[SUBGRUPO],
-                                cod_familia=register[COD_FAMILIA].zfill(9),
+                                cod_familia=cod_familia,
                                 familia=register[FAMILIA],
                                 )
 
