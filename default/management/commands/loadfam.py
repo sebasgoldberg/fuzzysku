@@ -31,19 +31,27 @@ class Command(BaseCommand):
                         if header:
                             header = False
                             continue
-                        line = line.strip()
+                        line = line.strip('\r\n')
                         register = line.split('\t')
                         for i in range(len(register)):
                             register[i] = register[i].strip()
 
                         try:
 
-                            secao = Secao.objects.get_or_create(
-                                cod_secao=register[COD_SECAO].zfill(2),
-                                secao=register[SECAO]
-                                )[0]
+                            try:
 
-                            secao.refresh_from_db()
+                                secao = Secao.objects.get(
+                                    secao=register[SECAO]
+                                    )
+
+                            except Secao.DoesNotExist:
+
+                                secao = Secao.objects.get_or_create(
+                                    cod_secao=register[COD_SECAO].zfill(2),
+                                    secao=register[SECAO]
+                                    )[0]
+
+                                secao.refresh_from_db()
 
                             cod_grupo=register[COD_GRUPO]
                             if cod_grupo <> '': 
