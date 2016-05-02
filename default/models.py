@@ -194,7 +194,7 @@ class Material(models.Model):
     familia_em_sugeridas = models.BooleanField(verbose_name=_(u'Familia em Sugeridas'), default=False)
     relevante = models.BooleanField(verbose_name=_(u'Relevante'), default=False)
 
-    secoes_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Possiveis'))
+    secoes_possiveis = models.ManyToManyField(Secao, verbose_name=_(u'Seções Possiveis'), blank=True)
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'), null=True, blank=True, on_delete=models.SET_NULL)
     secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True, on_delete=models.SET_NULL)
 
@@ -279,7 +279,7 @@ class Material(models.Model):
     def index_dict(self):
 
         setor = [ ]
-        if self.familia_selecionada:
+        if self.familia is not None:
             if self.familia.secao.setor is not None:
                 setor = [ self.familia.secao.setor.setor ]
             cod_secao = [ self.familia.secao.cod_secao ]

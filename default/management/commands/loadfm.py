@@ -21,8 +21,15 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('filepath', nargs='+')
+        parser.add_argument('--forcesec',
+            action='store_true',
+            dest='forcesec',
+            default=False,
+            help='Coloca a seção da familia indicada como a nova seção.')
 
     def handle(self, *args, **options):
+
+        forcesec = options['forcesec']
 
         with open('loadfm.err', 'w') as ferr:
 
@@ -135,12 +142,19 @@ class Command(BaseCommand):
 
                                 material.secoes_possiveis.add(secao)
 
+                                if forcesec:
+                                    if material.secao is not None:
+                                        material.secao = secao
+
                             except IntegrityError:
                                 material = Material.objects.get(cod_material=register[COD_MATERIAL])
                                 self.stdout.write(self.style.ERROR(u'ERRO: Material %s já existe na seção %s e difiere do registro fornecido: "%s".' % (material, material.secoes_possiveis.all(), register)))
                                 print(line,file=ferr)
                                 continue
 
+                            if material.familia is not None:
+                                if material.familia.id == familia.id:
+                                    continue
                             material.familia = familia
                             material.save()
 
@@ -154,6 +168,10 @@ class Command(BaseCommand):
                             self.stdout.write(self.style.ERROR(u'ERRO: Código de sub grupo não coincide: "%s".' % register))
                             print(line,file=ferr)
                         except SecoesNaoCoincidem:
-                            self.stdout.write(self.style.ERROR(u'Material %s tem seção distinta que a familia %s.' % (material,familia,) ))
+                            self.stdout.write(self.style.ERROR(u'ERRO: Material %s tem seção distinta que a familia %s.' % (material,familia,) ))
                             print(line,file=ferr)
+                        except UnicodeDecodeError:
+                            self.stdout.write(self.style.ERROR(u'ERRO: Erro unicode no registro: %s' % register ))
+                            print(line,file=ferr)
+                            
 
