@@ -38,7 +38,7 @@ def material_pre_save(sender, instance, **kwargs):
                 [instance.secao],
                 ))
 
-    elif not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
+    elif instance.pk is not None and not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
         raise SecoesNaoCoincidem(_(u'A familia %s tem seção %s, mas o material %s pertece a seções %s') % (
             instance.familia,
             instance.familia.secao,
