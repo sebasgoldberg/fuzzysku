@@ -12,18 +12,18 @@ class Command(BaseCommand):
     help = 'Gera um arquivo de familias separado por tabuladores.'
 
     def add_arguments(self, parser):
-        parser.add_argument('cod_secao', nargs='*')
+        parser.add_argument('setor', nargs='*')
 
     def handle(self, *args, **options):
 
-        if len(options['cod_secao']) == 0:
+        if len(options['setor']) == 0:
             materiais = Material.objects.all()
         else:
-            cod_secoes = options['cod_secao']
+            setores = options['setor']
             materiais = Material.objects.filter(
-                Q(familia_selecionada=True, familia__secao__cod_secao__in=cod_secoes) |
-                Q(familia_selecionada=False, secao__isnull=True, secoes_possiveis__cod_secao__in=cod_secoes) | 
-                Q(secao__cod_secao__in=cod_secoes)).distinct()
+                Q(familia_selecionada=True, familia__secao__setor__setor__in=setores) |
+                Q(familia_selecionada=False, secao__isnull=True, secoes_possiveis__setor__setor__in=setores) | 
+                Q(secao__setor__setor__in=setores)).distinct()
 
         print(u"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
             u"Setor",

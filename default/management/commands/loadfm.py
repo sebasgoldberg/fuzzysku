@@ -80,7 +80,7 @@ class Command(BaseCommand):
                             except IntegrityError:
                                 secao = Secao.objects.get(cod_secao=register[COD_SECAO])
                                 self.stdout.write(self.style.ERROR(u'ERRO: Seção %s já existe e difiere do registro fornecido: "%s".' % (secao, register)))
-                                print(line,file=ferr)
+                                print(line.strip(),file=ferr)
                                 continue
 
 
@@ -94,8 +94,6 @@ class Command(BaseCommand):
                                         subgrupo=register[SUBGRUPO],
                                         familia=register[FAMILIA],
                                         )
-
-                                    self.stdout.write(self.style.WARNING(u'Familia "%s" ja existe.' % familia))
 
                                 except Familia.DoesNotExist:
 
@@ -115,7 +113,7 @@ class Command(BaseCommand):
                             except IntegrityError:
                                 familia = Familia.objects.get(cod_familia=register[COD_FAMILIA])
                                 self.stdout.write(self.style.ERROR(u'ERRO: Familia %s já existe e difiere do registro fornecido: "%s".' % (familia, register)))
-                                print(line,file=ferr)
+                                print(line.strip(),file=ferr)
                                 continue
 
 
@@ -149,7 +147,7 @@ class Command(BaseCommand):
                             except IntegrityError:
                                 material = Material.objects.get(cod_material=register[COD_MATERIAL])
                                 self.stdout.write(self.style.ERROR(u'ERRO: Material %s já existe na seção %s e difiere do registro fornecido: "%s".' % (material, material.secoes_possiveis.all(), register)))
-                                print(line,file=ferr)
+                                print(line.strip(),file=ferr)
                                 continue
 
                             if material.familia is not None:
@@ -160,18 +158,18 @@ class Command(BaseCommand):
 
                         except CodigoSecaoNaoCoincide:
                             self.stdout.write(self.style.ERROR(u'ERRO: Código de seção não coincide: "%s".' % register))
-                            print(line,file=ferr)
+                            print(line.strip(),file=ferr)
                         except CodigoGrupoNaoCoincide:
                             self.stdout.write(self.style.ERROR(u'ERRO: Código de grupo não coincide: "%s".' % register))
-                            print(line,file=ferr)
+                            print(line.strip(),file=ferr)
                         except CodigoSubGrupoNaoCoincide:
                             self.stdout.write(self.style.ERROR(u'ERRO: Código de sub grupo não coincide: "%s".' % register))
-                            print(line,file=ferr)
+                            print(line.strip(),file=ferr)
                         except SecoesNaoCoincidem:
                             self.stdout.write(self.style.ERROR(u'ERRO: Material %s tem seção distinta que a familia %s.' % (material,familia,) ))
-                            print(line,file=ferr)
+                            print(line.strip(),file=ferr)
                         except UnicodeDecodeError:
                             self.stdout.write(self.style.ERROR(u'ERRO: Erro unicode no registro: %s' % register ))
-                            print(line,file=ferr)
+                            print(line.strip(),file=ferr)
                             
 
