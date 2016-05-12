@@ -125,8 +125,6 @@ class Command(BaseCommand):
                                         cod_material=register[COD_MATERIAL],
                                         )
 
-                                    self.stdout.write(self.style.WARNING(u'Material "%s" ja existe.' % material))
-
                                 except Material.DoesNotExist:
 
                                     material = Material.objects.create(
