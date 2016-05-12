@@ -2,7 +2,10 @@
 from django.core.management.base import BaseCommand, CommandError
 from default.models import *
 from multiprocessing import Pool
-from els.utils import ElasticFilesGenerator
+try:
+    from els.utils import ElasticFilesGenerator
+except ImportError:
+    pass
 import sys
 import codecs
 from django.db.models import Q
