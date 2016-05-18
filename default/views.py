@@ -46,12 +46,18 @@ def expfm(request):
     myfile = StringIO()
     myfile = codecs.getwriter('utf16')(myfile)
 
-    setor = request.GET['setor']
-    for line in expfm([ setor ]):
+    if 'setor' in request.GET:
+        setor = request.GET['setor']
+        setores = [ setor ]
+        filename = setor
+    else:
+        setores = None
+        filename = 'SKUs'
+    for line in expfm( setores ):
         print(line, file=myfile)
 
     response = HttpResponse(content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=%s.xls' % setor
+    response['Content-Disposition'] = 'attachment; filename=%s.xls' % filename
     response.write(myfile.getvalue())
     return response
 
