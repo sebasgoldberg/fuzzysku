@@ -10,6 +10,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('cod_secao', nargs='*')
+        parser.add_argument('--semfamilia',
+            action='store_true',
+            dest='semfamilia',
+            default=True,
+            help=u'Sugere só para os materiais que não tem familia.')
+
 
     def handle(self, *args, **options):
 
@@ -20,6 +26,9 @@ class Command(BaseCommand):
             materiais = Material.objects.all()
         else:
             materiais = Material.objects.filter(secoes_possiveis__cod_secao__in=options['cod_secao'])
+        
+        if options['semfamilia']:
+            materiais = materiais.filter(familia__isnull=True)
 
         for material in materiais:
             sugestoes = material.sugerir()

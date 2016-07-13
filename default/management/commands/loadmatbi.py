@@ -3,12 +3,13 @@ from __future__ import print_function
 from django.core.management.base import BaseCommand, CommandError
 from default.models import *
 from django.db.utils import IntegrityError
-from utils import ascii
 
 COD_SECAO = 0
 SECAO = 1
 COD_MATERIAL = 2
 MATERIAL = 3
+
+criar_seacao = False
 
 class Command(BaseCommand):
     help = 'Carrega materiais desde arquivo separado por tabuladores.'
@@ -17,7 +18,6 @@ class Command(BaseCommand):
         parser.add_argument('filepath', nargs='+')
 
     def handle(self, *args, **options):
-
         with open('loadmatbi.err', 'a+') as ferr:
             for filepath in options['filepath']:
                 with open(filepath, 'r') as f:
@@ -35,23 +35,28 @@ class Command(BaseCommand):
                             register[i] = register[i].strip().strip('"')
 
 
-                        try:
-                            
+                        if criar_seacao:
+                            try:
+                                
+                                cod_secao = register[COD_SECAO].zfill(2)
+
+                                secao_SAP, creado = SecaoSAP.objects.get_or_create(
+                                    cod_secao=cod_secao,
+                                    secao=register[SECAO]
+                                    )
+
+                                if creado:
+                                    secao_SAP.refresh_from_db()
+
+                            except IntegrityError:
+                                secao_SAP = SecaoSAP.objects.get(cod_secao=cod_secao)
+                                self.stdout.write(self.style.ERROR(u'ERRO: Seção SAP %s já existe e difiere do registro fornecido: "%s".' % (secao_SAP, register)))
+                                print(line,file=ferr)
+                                continue
+                        else:
                             cod_secao = register[COD_SECAO].zfill(2)
+                            secao_SAP = SecaoSAP.objects.get(cod_secao=cod_secao)
 
-                            secao_SAP, creado = SecaoSAP.objects.get_or_create(
-                                cod_secao=cod_secao,
-                                secao=register[SECAO]
-                                )
-
-                            if creado:
-                                secao_SAP.refresh_from_db()
-
-                        except IntegrityError:
-                            secao_SAP = SecaoSAP.objects.get(cod_secao=register[COD_SECAO])
-                            self.stdout.write(self.style.ERROR(ascii(u'ERRO: Seção SAP %s já existe e difiere do registro fornecido: "%s".' % (secao_SAP, register))))
-                            print(line,file=ferr)
-                            continue
 
 
                         try:
@@ -67,9 +72,9 @@ class Command(BaseCommand):
 
                             if creado:
                                 material.refresh_from_db()
-                                self.stdout.write(self.style.SUCCESS(ascii(u'Material "%s" criado com sucesso.' % material)))
+                                self.stdout.write(self.style.SUCCESS(u'Material "%s" criado com sucesso.' % material))
                             else:
-                                self.stdout.write(self.style.WARNING(ascii(u'Material "%s" ja existe.' % material)))
+                                self.stdout.write(self.style.WARNING(u'Material "%s" ja existe.' % material))
 
                         except IntegrityError:
 
@@ -78,10 +83,13 @@ class Command(BaseCommand):
                                 material = Material.objects.get(cod_material=register[COD_MATERIAL])
                                 material.secao_SAP = secao_SAP
                                 material.save()
-                                self.stdout.write(self.style.WARNING(ascii(u'Material "%s" ja existe.' % material)))
+                                self.stdout.write(self.style.WARNING(u'Material "%s" ja existe.' % material))
 
                             except:
 
-                                self.stdout.write(self.style.ERROR(ascii(u'ERRO: Material %s já existe na seção %s y difiere do registro fornecido: "%s". Ao tentar atualizar a Seção SAP ocurriou um erro.' % (material, material.secoes_possiveis.all(), register))))
+                                self.stdout.write(self.style.ERROR(u'ERRO: Material %s já existe na seção %s y difiere do registro fornecido: "%s". Ao tentar atualizar a Seção SAP ocurriou um erro.' % (material, material.secoes_possiveis.all(), register)))
                                 print(line,file=ferr)
+                        except UnicodeDecodeError:
+                            self.stdout.write(self.style.ERROR(u'ERROR: Erro de conversão unicode.' % register))
+                            print(line,file=ferr)
 
