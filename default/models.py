@@ -46,6 +46,8 @@ class BaseSecao(models.Model):
     
     cod_secao = models.CharField(max_length=2, verbose_name=_(u'Cod. Seção'), unique=True)
     secao = models.CharField(max_length=100, verbose_name=_(u'Seção'))
+    data_criacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now_add=True)
+    data_modificacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now=True)
 
     class Meta:
         ordering = ['cod_secao']
@@ -94,6 +96,8 @@ class Familia(models.Model):
     subgrupo = models.CharField(max_length=100, verbose_name=_(u'Subgrupo'))
     cod_familia = models.CharField(max_length=9, verbose_name=_(u'Cod. Familia'), unique=True)
     familia = models.CharField(max_length=100, verbose_name=_(u'Familia'))
+    data_criacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now_add=True)
+    data_modificacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now=True)
 
     class Meta:
         ordering = ['cod_familia']
@@ -199,6 +203,9 @@ class Material(models.Model):
     secao_SAP = models.ForeignKey(SecaoSAP, verbose_name=_(u'Seção SAP'), null=True, blank=True, on_delete=models.SET_NULL)
 
     secao = models.ForeignKey(Secao, verbose_name=_(u'Nova Seção'), related_name='rel_secao', null=True, blank=True)
+
+    data_criacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now_add=True)
+    data_modificacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now=True)
 
     class Meta:
         ordering = ['material']
@@ -342,6 +349,9 @@ class Sugestao(models.Model):
     material = models.ForeignKey(Material, verbose_name=_(u'Material'))
     familia = models.ForeignKey(Familia, verbose_name=_(u'Familia'))
     score = models.FloatField(verbose_name=_(u'Pontuação'), default=0)
+
+    data_criacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now_add=True)
+    data_modificacao = models.DateTimeField(verbose_name=_(u'Seções Novas Possiveis'), auto_now=True)
 
     class Meta:
         ordering = ['familia', 'material',]
