@@ -75,5 +75,8 @@ class Command(BaseCommand):
                             self.stdout.write(self.style.ERROR(u'ERRO: Seção SAP %s não existe. Registro fornecido: "%s".' % (cod_secao, register)))
                             print(line,file=ferr)
                             continue
+                        except UnicodeDecodeError:
+                            self.stdout.write(self.style.ERROR(u'ERROR: Erro de conversão unicode.' % register))
+                            print(line,file=ferr)
 
 
