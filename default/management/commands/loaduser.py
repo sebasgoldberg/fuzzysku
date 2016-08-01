@@ -3,7 +3,6 @@ from __future__ import print_function
 from django.core.management.base import BaseCommand, CommandError
 from default.models import Material, Secao
 from django.db.utils import IntegrityError
-from utils import ascii
 from django.contrib.auth.models import User, Group
 
 USERNAME = 0
@@ -50,7 +49,7 @@ class Command(BaseCommand):
                             
                             try:
                                 user = User.objects.get(username=username)
-                                self.stdout.write(self.style.WARNING(ascii(u'Usuario "%s" ja existe.' % user)))
+                                self.stdout.write(self.style.WARNING(u'Usuario "%s" ja existe.' % user))
                             except User.DoesNotExist:
 
                                 user = User.objects.create_user(
@@ -64,7 +63,7 @@ class Command(BaseCommand):
 
                                 user.groups=[grupo]
                                 user.save()
-                                self.stdout.write(self.style.SUCCESS(ascii(u'Usuario "%s" criado com sucesso.' % user)))
+                                self.stdout.write(self.style.SUCCESS(u'Usuario "%s" criado com sucesso.' % user))
 
                         except IntegrityError:
 
