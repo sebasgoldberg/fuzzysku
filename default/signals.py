@@ -35,7 +35,7 @@ def material_pre_save(sender, instance, **kwargs):
                 instance.familia,
                 instance.familia.secao,
                 instance,
-                [instance.secao],
+                [u'%s'%instance.secao],
                 ))
 
     elif not instance.secoes_possiveis.filter(pk=instance.familia.secao.pk).exists():
