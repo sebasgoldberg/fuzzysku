@@ -31,9 +31,14 @@ class Command(BaseCommand):
                         register = line.split(';')
                         if len(register) <> 5:
                             continue
+
                         for i in range(len(register)):
                             register[i] = register[i].strip().strip('"')
 
+                        if register[MATERIAL] == 'Resultado':
+                            continue
+                        if register[MATERIAL] == 'Resultado global':
+                            break
 
                         if criar_seacao:
                             try:
