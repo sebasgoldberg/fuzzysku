@@ -17,7 +17,7 @@ MATERIAL = 9
 
             
 class Command(BaseCommand):
-    help = 'Carrega familias de materiais y materiais desde arquivo separado por tabuladores.'
+    help = u'Carrega familias de materiais y materiais desde arquivo separado por tabuladores.'
 
     def add_arguments(self, parser):
         parser.add_argument('filepath', nargs='+')
@@ -25,7 +25,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='forcesec',
             default=False,
-            help='Coloca a seção da familia indicada como a nova seção.')
+            help=u'Coloca a seção da familia indicada como a nova seção.')
 
     def handle(self, *args, **options):
 
